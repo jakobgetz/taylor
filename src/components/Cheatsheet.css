@@ -3,23 +3,23 @@
   display: flex;
   flex: 1;
   overflow: hidden;
-  background: #1a1a2e;
+  background: #f8fafc;
 }
 
 /* ── Sidebar ────────────────────────────────────────────────────── */
 .cs-sidebar {
-  width: 230px;
+  width: 220px;
   flex-shrink: 0;
-  background: #12121f;
-  border-right: 1px solid #2a2a40;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
   overflow-y: auto;
 }
 
 .cs-sidebar-inner {
-  padding: 16px 12px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* Search */
@@ -30,62 +30,66 @@
 .cs-search {
   width: 100%;
   box-sizing: border-box;
-  background: #1e1e30;
-  border: 1px solid #2e2e45;
-  border-radius: 8px;
-  color: #e0e0f0;
-  padding: 8px 32px 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  color: #0f172a;
+  padding: 7px 30px 7px 12px;
   font-size: 0.82rem;
+  font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .cs-search:focus {
-  border-color: #5a8af0;
+  border-color: #94a3b8;
+  background: #fff;
 }
 
 .cs-search::placeholder {
-  color: #555570;
+  color: #94a3b8;
 }
 
 .cs-search-clear {
   position: absolute;
-  right: 8px;
+  right: 9px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #888;
+  color: #94a3b8;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   padding: 2px;
   line-height: 1;
 }
 
-.cs-search-clear:hover { color: #ccc; }
+.cs-search-clear:hover { color: #475569; }
 
 /* Nav */
 .cs-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .cs-nav-all {
   background: none;
   border: none;
   border-radius: 6px;
-  color: #888;
+  color: #64748b;
   cursor: pointer;
   font-size: 0.78rem;
+  font-family: inherit;
+  font-weight: 500;
   padding: 6px 10px;
   text-align: left;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
   margin-bottom: 4px;
 }
 
-.cs-nav-all:hover { background: #2a2a40; color: #ccc; }
-.cs-nav-all--active { background: #2a2a40; color: #e0e0f0; }
+.cs-nav-all:hover { background: #f1f5f9; color: #1e293b; }
+.cs-nav-all--active { background: #f1f5f9; color: #0f172a; font-weight: 600; }
 
 .cs-nav-item {
   display: flex;
@@ -94,34 +98,37 @@
   background: none;
   border: none;
   border-radius: 6px;
-  color: #9090b0;
+  color: #475569;
   cursor: pointer;
   font-size: 0.78rem;
+  font-family: inherit;
   padding: 6px 10px;
   text-align: left;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
   width: 100%;
 }
 
 .cs-nav-item:hover {
-  background: color-mix(in srgb, var(--cs-color) 12%, #1e1e30);
-  color: #e0e0f0;
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .cs-nav-item--active {
-  background: color-mix(in srgb, var(--cs-color) 20%, #1e1e30);
-  color: #e0e0f0;
+  background: color-mix(in srgb, var(--cs-color) 10%, #f8fafc);
+  color: #0f172a;
+  font-weight: 600;
   border-left: 3px solid var(--cs-color);
   padding-left: 7px;
 }
 
 .cs-nav-icon {
-  font-size: 0.7rem;
-  width: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--cs-color);
+  font-family: monospace;
+  width: 22px;
   text-align: center;
   flex-shrink: 0;
-  color: var(--cs-color);
-  font-weight: bold;
 }
 
 .cs-nav-label {
@@ -134,10 +141,10 @@
 
 .cs-nav-badge {
   font-size: 0.68rem;
-  background: #2a2a40;
+  background: #f1f5f9;
   border-radius: 10px;
   padding: 1px 6px;
-  color: #666;
+  color: #94a3b8;
   flex-shrink: 0;
 }
 
@@ -145,17 +152,17 @@
 .cs-main {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 28px;
+  padding: 22px 26px;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 32px;
 }
 
 .cs-search-summary {
-  color: #888;
+  color: #64748b;
   font-size: 0.82rem;
-  padding: 0 4px;
-  margin-bottom: -20px;
+  padding: 0 2px;
+  margin-bottom: -16px;
 }
 
 /* Empty state */
@@ -166,32 +173,34 @@
   justify-content: center;
   gap: 12px;
   padding: 80px 0;
-  color: #666;
+  color: #94a3b8;
   font-size: 0.9rem;
 }
 
 .cs-empty span { font-size: 2.5rem; }
-.cs-empty p { margin: 0; }
-.cs-empty strong { color: #999; }
+.cs-empty p { margin: 0; color: #64748b; }
+.cs-empty strong { color: #475569; }
 
 .cs-empty button {
   margin-top: 8px;
-  background: #2a2a40;
-  border: none;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  color: #aaa;
+  color: #475569;
   cursor: pointer;
   padding: 6px 16px;
   font-size: 0.82rem;
+  font-family: inherit;
+  transition: background 0.12s;
 }
 
-.cs-empty button:hover { background: #353555; color: #ddd; }
+.cs-empty button:hover { background: #e2e8f0; color: #1e293b; }
 
 /* ── Category section ───────────────────────────────────────────── */
 .cs-category {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .cs-category-header {
@@ -203,10 +212,10 @@
 }
 
 .cs-category-icon {
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: var(--cs-color);
-  background: color-mix(in srgb, var(--cs-color) 15%, #1a1a2e);
+  background: color-mix(in srgb, var(--cs-color) 12%, #f8fafc);
   border-radius: 6px;
   padding: 4px 8px;
   font-family: monospace;
@@ -215,16 +224,16 @@
 .cs-category-title {
   flex: 1;
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #e0e0f0;
-  letter-spacing: 0.01em;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
 .cs-category-count {
-  font-size: 0.72rem;
-  color: #666;
-  background: #1e1e30;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  background: #f1f5f9;
   border-radius: 10px;
   padding: 2px 8px;
 }
@@ -232,34 +241,33 @@
 /* ── Formula grid ───────────────────────────────────────────────── */
 .cs-formula-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
 }
 
 /* ── Formula card ───────────────────────────────────────────────── */
 .cs-formula-card {
-  background: #1e1e30;
-  border: 1px solid #2a2a40;
+  background: #fff;
+  border: 1px solid #e2e8f0;
   border-left: 3px solid var(--cs-color);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  gap: 8px;
+  transition: box-shadow 0.15s, transform 0.12s;
 }
 
 .cs-formula-card:hover {
-  border-color: var(--cs-color);
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--cs-color) 15%, transparent);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   transform: translateY(-1px);
 }
 
 .cs-formula-name {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   color: var(--cs-color);
 }
 
@@ -267,20 +275,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 8px 4px;
+  min-height: 40px;
+  padding: 6px 4px;
   overflow-x: auto;
 }
 
 /* KaTeX sizing */
 .cs-formula-math .katex {
   font-size: 1.05em;
-  color: #e8e8f8;
+  color: #0f172a;
 }
 
 .cs-formula-note {
-  font-size: 0.72rem;
-  color: #666;
+  font-size: 0.7rem;
+  color: #94a3b8;
   font-style: italic;
   text-align: center;
 }
@@ -288,7 +296,7 @@
 /* ── Scrollbar styling ──────────────────────────────────────────── */
 .cs-sidebar::-webkit-scrollbar,
 .cs-main::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .cs-sidebar::-webkit-scrollbar-track,
@@ -298,11 +306,11 @@
 
 .cs-sidebar::-webkit-scrollbar-thumb,
 .cs-main::-webkit-scrollbar-thumb {
-  background: #2e2e45;
+  background: #e2e8f0;
   border-radius: 3px;
 }
 
 .cs-sidebar::-webkit-scrollbar-thumb:hover,
 .cs-main::-webkit-scrollbar-thumb:hover {
-  background: #3e3e60;
+  background: #cbd5e1;
 }
