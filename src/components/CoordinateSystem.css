@@ -63,6 +63,12 @@
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: opacity 0.2s;
+}
+
+.curve-taylor--dim {
+  opacity: 0.25;
+  stroke-dasharray: 5 3;
 }
 
 .curve-term {
@@ -106,6 +112,12 @@
 
 .legend-swatch--taylor {
   stroke: #2563eb;
+}
+
+.legend-swatch--taylor-dim {
+  stroke: #2563eb;
+  opacity: 0.35;
+  stroke-dasharray: 5 3;
 }
 
 .legend-swatch--term {

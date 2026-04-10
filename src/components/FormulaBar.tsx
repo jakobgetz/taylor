@@ -1,15 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import type { TaylorFunction, Term } from '../data/functions';
+import type { TaylorFunction } from '../data/functions';
+import { N_MAX } from '../data/functions';
 import './FormulaBar.css';
 
 interface Props {
   functions: TaylorFunction[];
   selected: TaylorFunction;
   onSelectFunction: (fn: TaylorFunction) => void;
-  selectedTerm: Term | null;
-  onSelectTerm: (term: Term | null) => void;
+  termRange: [number, number] | null;
+  onSelectTermRange: (range: [number, number] | null) => void;
+  numTerms: number;
+  onNumTermsChange: (n: number) => void;
 }
 
 function renderLatex(latex: string): string {
@@ -20,8 +23,10 @@ export function FormulaBar({
   functions,
   selected,
   onSelectFunction,
-  selectedTerm,
-  onSelectTerm,
+  termRange,
+  onSelectTermRange,
+  numTerms,
+  onNumTermsChange,
 }: Props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,9 +44,22 @@ export function FormulaBar({
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleTermClick = (term: Term) => {
-    onSelectTerm(selectedTerm?.index === term.index ? null : term);
+  const handleTermClick = (termIndex: number, e: React.MouseEvent) => {
+    if (e.shiftKey && termRange !== null) {
+      // Extend the range: anchor stays at termRange[0], stretch to new index
+      const anchor = termRange[0];
+      const lo = Math.min(anchor, termIndex);
+      const hi = Math.max(anchor, termIndex);
+      onSelectTermRange([lo, hi]);
+    } else {
+      // Single click: toggle selection of this term
+      const isSingle = termRange !== null && termRange[0] === termIndex && termRange[1] === termIndex;
+      onSelectTermRange(isSingle ? null : [termIndex, termIndex]);
+    }
   };
+
+  const visibleTerms = selected.terms.slice(0, numTerms);
+  const maxTerms = Math.min(N_MAX, selected.terms.length);
 
   return (
     <div className="formula-bar">
@@ -84,36 +102,60 @@ export function FormulaBar({
 
       <div className="formula-divider" />
 
-      {/* ── Field 2: sigma notation ── */}
+      {/* ── Field 2: sigma notation — click to reset selection ── */}
       <div className="formula-field formula-field--short">
-        <span
-          className="short-form"
-          dangerouslySetInnerHTML={{
-            __html: renderLatex(selected.shortFormLatex),
-          }}
-        />
+        <button
+          className={`short-form-btn ${termRange === null ? 'short-form-btn--active' : ''}`}
+          onClick={() => onSelectTermRange(null)}
+          title="Show full Taylor series"
+        >
+          <span
+            dangerouslySetInnerHTML={{
+              __html: renderLatex(selected.shortFormLatex),
+            }}
+          />
+        </button>
       </div>
 
       <div className="formula-divider" />
 
-      {/* ── Field 3: expanded long form ── */}
+      {/* ── Field 3: expanded long form with range selection ── */}
       <div className="formula-field formula-field--long">
         <div className="long-form">
-          {selected.terms.map((term, i) => {
-            const isSelected = selectedTerm?.index === term.index;
+          {visibleTerms.map((term, i) => {
+            const inRange =
+              termRange !== null &&
+              term.index >= termRange[0] &&
+              term.index <= termRange[1];
+            const isRangeStart = termRange !== null && term.index === termRange[0];
+            const isSingle =
+              termRange !== null &&
+              termRange[0] === termRange[1] &&
+              term.index === termRange[0];
+
             return (
               <span key={term.index} className="term-group">
-                {/* sign between terms (not part of the clickable chip) */}
                 {i > 0 && (
-                  <span className="term-operator">
+                  <span className={`term-operator ${inRange ? 'term-operator--in-range' : ''}`}>
                     {term.sign === '+' ? '+' : '−'}
                   </span>
                 )}
 
                 <button
-                  className={`term-chip ${isSelected ? 'term-chip--selected' : ''}`}
-                  onClick={() => handleTermClick(term)}
-                  title={`Show only term ${i}`}
+                  className={[
+                    'term-chip',
+                    inRange ? 'term-chip--in-range' : '',
+                    isSingle ? 'term-chip--selected' : '',
+                    isRangeStart && !isSingle ? 'term-chip--range-start' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={(e) => handleTermClick(term.index, e)}
+                  title={
+                    termRange === null
+                      ? 'Click to isolate · Shift+click to start range'
+                      : 'Click to reset · Shift+click to extend range'
+                  }
                 >
                   <span
                     dangerouslySetInnerHTML={{
@@ -125,6 +167,32 @@ export function FormulaBar({
             );
           })}
           <span className="ellipsis">&thinsp;+&thinsp;&hellip;</span>
+        </div>
+      </div>
+
+      <div className="formula-divider" />
+
+      {/* ── Field 4: numTerms stepper ── */}
+      <div className="formula-field formula-field--stepper">
+        <span className="stepper-label">Terms</span>
+        <div className="stepper">
+          <button
+            className="stepper-btn"
+            onClick={() => onNumTermsChange(numTerms - 1)}
+            disabled={numTerms <= 1}
+            aria-label="Fewer terms"
+          >
+            −
+          </button>
+          <span className="stepper-value">{numTerms}</span>
+          <button
+            className="stepper-btn"
+            onClick={() => onNumTermsChange(numTerms + 1)}
+            disabled={numTerms >= maxTerms}
+            aria-label="More terms"
+          >
+            +
+          </button>
         </div>
       </div>
     </div>
