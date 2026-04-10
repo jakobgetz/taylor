@@ -82,13 +82,20 @@ interface FnRowProps {
   value: number;
   color: string;
   exact?: string;
+  hovered: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
-function FnRow({ dot, name, value, color, exact }: FnRowProps) {
+function FnRow({ dot, name, value, color, exact, hovered, onMouseEnter, onMouseLeave }: FnRowProps) {
   const undef = isUndef(value) || exact === '∞';
   const barWidth = undef ? 0 : Math.min(1, Math.abs(value) / 5);
   return (
-    <div className="uc-fn-row">
+    <div
+      className={`uc-fn-row${hovered ? ' uc-fn-row--hovered' : ''}`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className="uc-fn-main">
         <div className="uc-fn-dot" style={{ background: dot }} />
         <span className="uc-fn-name">{name}</span>
@@ -119,6 +126,7 @@ function FnRow({ dot, name, value, color, exact }: FnRowProps) {
 export function UnitCircle() {
   const [theta, _setTheta] = useState(Math.PI / 4);
   const [dragging, _setDragging] = useState(false);
+  const [hoveredFn, setHoveredFn] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const draggingRef = useRef(false);
 
@@ -136,6 +144,21 @@ export function UnitCircle() {
 
   const showTan = Math.abs(cosT) > 0.08;
   const showCot = Math.abs(sinT) > 0.08;
+
+  // Segment opacity/width based on hover
+  const seg = (name: string, baseWidth: number) => ({
+    opacity: hoveredFn === null || hoveredFn === name ? 1 : 0.15,
+    strokeWidth: hoveredFn === name ? baseWidth * 2 : baseWidth,
+    transition: 'opacity 0.15s, stroke-width 0.15s',
+  });
+
+  // Right-angle marker (5×5 square) at a corner; ox/oy = corner in math coords, ax/ay and bx/by = the two directions (unit vecs in math space)
+  const rightAngle = (ox: number, oy: number, ax: number, ay: number, bx: number, by: number, s = 0.07) => {
+    const p1x = toSvgX(ox + ax * s), p1y = toSvgY(oy + ay * s);
+    const p2x = toSvgX(ox + ax * s + bx * s), p2y = toSvgY(oy + ay * s + by * s);
+    const p3x = toSvgX(ox + bx * s), p3y = toSvgY(oy + by * s);
+    return `M${p1x},${p1y} L${p2x},${p2y} L${p3x},${p3y}`;
+  };
 
   // Label positions along sec/csc lines (clamped so they stay on screen)
   const secLabelT  = showTan ? Math.min(0.6, 1.0 / Math.max(1, Math.abs(secT))) : 0;
@@ -286,13 +309,14 @@ export function UnitCircle() {
               <line
                 x1={CX} y1={CY}
                 x2={toSvgX(1)} y2={toSvgY(tanT)}
-                stroke="#059669" strokeWidth={2} strokeDasharray="5 3"
+                stroke="#059669" strokeDasharray="5 3"
+                {...seg('sec', 2)}
               />
               <text
                 x={secLblX} y={secLblY}
                 fontSize={11} fill="#059669"
                 textAnchor="start" dominantBaseline="middle"
-                style={{ userSelect: 'none', pointerEvents: 'none' }}
+                style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'sec' ? 1 : 0.15, transition: 'opacity 0.15s' }}
               >sec θ</text>
             </>
           )}
@@ -303,13 +327,14 @@ export function UnitCircle() {
               <line
                 x1={CX} y1={CY}
                 x2={toSvgX(cotT)} y2={toSvgY(1)}
-                stroke="#db2777" strokeWidth={2} strokeDasharray="5 3"
+                stroke="#db2777" strokeDasharray="5 3"
+                {...seg('csc', 2)}
               />
               <text
                 x={cscLblX} y={cscLblY}
                 fontSize={11} fill="#db2777"
                 textAnchor="middle" dominantBaseline="auto"
-                style={{ userSelect: 'none', pointerEvents: 'none' }}
+                style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'csc' ? 1 : 0.15, transition: 'opacity 0.15s' }}
               >csc θ</text>
             </>
           )}
@@ -318,49 +343,62 @@ export function UnitCircle() {
           <line
             x1={CX} y1={CY}
             x2={toSvgX(cosT)} y2={CY}
-            stroke="#2563eb" strokeWidth={2.5}
+            stroke="#2563eb"
+            {...seg('cos', 2.5)}
           />
+          {/* right-angle mark at (cosT, 0) between cos and sin */}
+          {Math.abs(sinT) > 0.1 && Math.abs(cosT) > 0.1 && (
+            <path
+              d={rightAngle(cosT, 0, -Math.sign(cosT), 0, 0, Math.sign(sinT))}
+              fill="none" stroke="#94a3b8" strokeWidth={1}
+              style={{ pointerEvents: 'none' }}
+            />
+          )}
           <text
             x={(CX + toSvgX(cosT)) / 2}
-            y={CY + 14}
-            fontSize={11}
-            fill="#2563eb"
-            textAnchor="middle"
-            style={{ userSelect: "none", pointerEvents: "none" }}
+            y={CY + (sinT >= 0 ? 14 : -6)}
+            fontSize={11} fill="#2563eb" textAnchor="middle"
+            style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'cos' ? 1 : 0.15, transition: 'opacity 0.15s' }}
           >cos θ</text>
 
           {/* sin segment: (cosT, 0) to (cosT, sinT) */}
           <line
             x1={toSvgX(cosT)} y1={CY}
             x2={toSvgX(cosT)} y2={toSvgY(sinT)}
-            stroke="#dc2626" strokeWidth={2.5}
+            stroke="#dc2626"
+            {...seg('sin', 2.5)}
           />
           <text
             x={toSvgX(cosT) + (cosT >= 0 ? 14 : -14)}
             y={(CY + toSvgY(sinT)) / 2}
-            fontSize={11}
-            fill="#dc2626"
-            textAnchor={cosT >= 0 ? 'start' : 'end'}
-            dominantBaseline="middle"
-            style={{ userSelect: "none", pointerEvents: "none" }}
+            fontSize={11} fill="#dc2626"
+            textAnchor={cosT >= 0 ? 'start' : 'end'} dominantBaseline="middle"
+            style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'sin' ? 1 : 0.15, transition: 'opacity 0.15s' }}
           >sin θ</text>
 
           {/* tan segment: (1, 0) to (1, tanT) */}
           {showTan && (
             <>
+              {/* right-angle mark at (1, 0) between x-axis and tan */}
+              {Math.abs(tanT) > 0.1 && (
+                <path
+                  d={rightAngle(1, 0, -1, 0, 0, Math.sign(tanT))}
+                  fill="none" stroke="#94a3b8" strokeWidth={1}
+                  style={{ pointerEvents: 'none' }}
+                />
+              )}
               <line
                 x1={toSvgX(1)} y1={CY}
                 x2={toSvgX(1)} y2={toSvgY(tanT)}
-                stroke="#d97706" strokeWidth={2}
+                stroke="#d97706"
+                {...seg('tan', 2)}
               />
               <text
                 x={toSvgX(1) + 12}
                 y={(CY + toSvgY(tanT)) / 2}
-                fontSize={11}
-                fill="#d97706"
-                textAnchor="start"
-                dominantBaseline="middle"
-                style={{ userSelect: "none", pointerEvents: "none" }}
+                fontSize={11} fill="#d97706"
+                textAnchor="start" dominantBaseline="middle"
+                style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'tan' ? 1 : 0.15, transition: 'opacity 0.15s' }}
               >tan θ</text>
             </>
           )}
@@ -368,18 +406,25 @@ export function UnitCircle() {
           {/* cot segment: (0,1) to (cotT, 1) */}
           {showCot && (
             <>
+              {/* right-angle mark at (0, 1) between y-axis and cot */}
+              {Math.abs(cotT) > 0.1 && (
+                <path
+                  d={rightAngle(0, 1, Math.sign(cotT), 0, 0, -1)}
+                  fill="none" stroke="#94a3b8" strokeWidth={1}
+                  style={{ pointerEvents: 'none' }}
+                />
+              )}
               <line
                 x1={CX} y1={toSvgY(1)}
                 x2={toSvgX(cotT)} y2={toSvgY(1)}
-                stroke="#7c3aed" strokeWidth={2}
+                stroke="#7c3aed"
+                {...seg('cot', 2)}
               />
               <text
                 x={(CX + toSvgX(cotT)) / 2}
                 y={toSvgY(1) + (sinT >= 0 ? -10 : 14)}
-                fontSize={11}
-                fill="#7c3aed"
-                textAnchor="middle"
-                style={{ userSelect: "none", pointerEvents: "none" }}
+                fontSize={11} fill="#7c3aed" textAnchor="middle"
+                style={{ userSelect: 'none', pointerEvents: 'none', opacity: hoveredFn === null || hoveredFn === 'cot' ? 1 : 0.15, transition: 'opacity 0.15s' }}
               >cot θ</text>
             </>
           )}
@@ -389,6 +434,7 @@ export function UnitCircle() {
             x1={CX} y1={CY}
             x2={px} y2={py}
             stroke="#64748b" strokeWidth={1}
+            style={{ opacity: hoveredFn === null ? 1 : 0.3, transition: 'opacity 0.15s' }}
           />
 
           {/* Draggable point P */}
@@ -423,12 +469,12 @@ export function UnitCircle() {
           <div className="uc-angle-deg">{degrees}°</div>
         </div>
 
-        <FnRow dot="#dc2626" name="sin θ" value={sinT} color="#dc2626" exact={exactVals?.sin} />
-        <FnRow dot="#2563eb" name="cos θ" value={cosT} color="#2563eb" exact={exactVals?.cos} />
-        <FnRow dot="#d97706" name="tan θ" value={tanT} color="#d97706" exact={exactVals?.tan} />
-        <FnRow dot="#7c3aed" name="cot θ" value={cotT} color="#7c3aed" exact={exactVals?.cot} />
-        <FnRow dot="#059669" name="sec θ" value={secT} color="#059669" exact={exactVals?.sec} />
-        <FnRow dot="#db2777" name="csc θ" value={cscT} color="#db2777" exact={exactVals?.csc} />
+        <FnRow dot="#dc2626" name="sin θ" value={sinT} color="#dc2626" exact={exactVals?.sin} hovered={hoveredFn === 'sin'} onMouseEnter={() => setHoveredFn('sin')} onMouseLeave={() => setHoveredFn(null)} />
+        <FnRow dot="#2563eb" name="cos θ" value={cosT} color="#2563eb" exact={exactVals?.cos} hovered={hoveredFn === 'cos'} onMouseEnter={() => setHoveredFn('cos')} onMouseLeave={() => setHoveredFn(null)} />
+        <FnRow dot="#d97706" name="tan θ" value={tanT} color="#d97706" exact={exactVals?.tan} hovered={hoveredFn === 'tan'} onMouseEnter={() => setHoveredFn('tan')} onMouseLeave={() => setHoveredFn(null)} />
+        <FnRow dot="#7c3aed" name="cot θ" value={cotT} color="#7c3aed" exact={exactVals?.cot} hovered={hoveredFn === 'cot'} onMouseEnter={() => setHoveredFn('cot')} onMouseLeave={() => setHoveredFn(null)} />
+        <FnRow dot="#059669" name="sec θ" value={secT} color="#059669" exact={exactVals?.sec} hovered={hoveredFn === 'sec'} onMouseEnter={() => setHoveredFn('sec')} onMouseLeave={() => setHoveredFn(null)} />
+        <FnRow dot="#db2777" name="csc θ" value={cscT} color="#db2777" exact={exactVals?.csc} hovered={hoveredFn === 'csc'} onMouseEnter={() => setHoveredFn('csc')} onMouseLeave={() => setHoveredFn(null)} />
       </div>
     </div>
   );

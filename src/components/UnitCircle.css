@@ -58,6 +58,15 @@
   gap: 2px;
   padding: 10px 0;
   border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 6px;
+}
+
+.uc-fn-row:hover,
+.uc-fn-row--hovered {
+  background: #f8fafc;
+  padding-left: 6px;
 }
 
 .uc-fn-row:last-child {
