@@ -6,6 +6,7 @@ import { FUNCTIONS, N_MAX } from './data/functions';
 import { FOURIER_FUNCTIONS } from './data/fourier-functions';
 import { FormulaBar } from './components/FormulaBar';
 import { CoordinateSystem } from './components/CoordinateSystem';
+import { UnitCircle } from './components/UnitCircle';
 import './App.css';
 
 const DEFAULT_NUM_TERMS = 8;
@@ -21,7 +22,7 @@ const FOURIER_FORMULA = katex.renderToString(
 );
 
 export default function App() {
-  const [mode, setMode] = useState<'taylor' | 'fourier'>('taylor');
+  const [mode, setMode] = useState<'taylor' | 'fourier' | 'geometric'>('taylor');
   const [modeOpen, setModeOpen] = useState(false);
   const modeRef = useRef<HTMLDivElement>(null);
   const [selectedFn, setSelectedFn] = useState<TaylorFunction>(FUNCTIONS[0]);
@@ -38,9 +39,11 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleModeChange = (newMode: 'taylor' | 'fourier') => {
+  const handleModeChange = (newMode: 'taylor' | 'fourier' | 'geometric') => {
     setMode(newMode);
-    setSelectedFn(newMode === 'taylor' ? FUNCTIONS[0] : FOURIER_FUNCTIONS[0]);
+    if (newMode !== 'geometric') {
+      setSelectedFn(newMode === 'taylor' ? FUNCTIONS[0] : FOURIER_FUNCTIONS[0]);
+    }
     setTermRange(null);
     setNumTerms(DEFAULT_NUM_TERMS);
     setModeOpen(false);
@@ -67,7 +70,9 @@ export default function App() {
     ? 'all examples use a\u00a0=\u00a00 (Maclaurin series)'
     : 'all examples use period 2\u03C0';
   const seriesLabel = mode === 'taylor' ? 'Taylor' : 'Fourier';
-  const modeTitle = mode === 'taylor' ? 'Taylor Series Explorer' : 'Fourier Series Explorer';
+  const modeTitle = mode === 'taylor' ? 'Taylor Series Explorer'
+    : mode === 'fourier' ? 'Fourier Series Explorer'
+    : 'Geometric Functions';
 
   return (
     <div className="app">
@@ -90,30 +95,47 @@ export default function App() {
                 className={`mode-option ${mode === 'fourier' ? 'mode-option--active' : ''}`}
                 onClick={() => handleModeChange('fourier')}
               >Fourier Series</button>
+              <button
+                className={`mode-option ${mode === 'geometric' ? 'mode-option--active' : ''}`}
+                onClick={() => handleModeChange('geometric')}
+              >Geometric Functions</button>
             </div>
           )}
         </div>
-        <span className="app-fn-label">{selectedFn.label}</span>
-        <span className="app-general-formula" dangerouslySetInnerHTML={{ __html: formula }} />
-        <span className="app-maclaurin-note">{note}</span>
+        {mode !== 'geometric' && (
+          <>
+            <span className="app-fn-label">{selectedFn.label}</span>
+            <span className="app-general-formula" dangerouslySetInnerHTML={{ __html: formula }} />
+            <span className="app-maclaurin-note">{note}</span>
+          </>
+        )}
+        {mode === 'geometric' && (
+          <span className="app-geo-subtitle">Drag the point · explore the unit circle</span>
+        )}
       </header>
 
-      <FormulaBar
-        functions={currentFunctions}
-        selected={selectedFn}
-        onSelectFunction={handleSelectFunction}
-        termRange={termRange}
-        onSelectTermRange={setTermRange}
-        numTerms={numTerms}
-        onNumTermsChange={handleNumTermsChange}
-      />
+      {mode === 'geometric' ? (
+        <UnitCircle />
+      ) : (
+        <>
+          <FormulaBar
+            functions={currentFunctions}
+            selected={selectedFn}
+            onSelectFunction={handleSelectFunction}
+            termRange={termRange}
+            onSelectTermRange={setTermRange}
+            numTerms={numTerms}
+            onNumTermsChange={handleNumTermsChange}
+          />
 
-      <CoordinateSystem
-        fn={selectedFn}
-        termRange={termRange}
-        numTerms={numTerms}
-        seriesLabel={seriesLabel}
-      />
+          <CoordinateSystem
+            fn={selectedFn}
+            termRange={termRange}
+            numTerms={numTerms}
+            seriesLabel={seriesLabel}
+          />
+        </>
+      )}
     </div>
   );
 }
