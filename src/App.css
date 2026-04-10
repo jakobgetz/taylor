@@ -36,3 +36,10 @@
   font-size: 13px;
   line-height: 1;
 }
+
+.app-maclaurin-note {
+  font-size: 11px;
+  color: #cbd5e1;
+  white-space: nowrap;
+  font-style: italic;
+}

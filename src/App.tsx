@@ -10,7 +10,7 @@ import './App.css';
 const DEFAULT_NUM_TERMS = 8;
 
 const GENERAL_FORMULA = katex.renderToString(
-  'f(x) = \\displaystyle\\sum_{n=0}^{\\infty} \\dfrac{f^{(n)}(0)}{n!}\\,x^n',
+  'f(x) = \\displaystyle\\sum_{n=0}^{\\infty} \\dfrac{f^{(n)}(a)}{n!}\\,(x-a)^n',
   { throwOnError: false, output: 'html' }
 );
 
@@ -42,6 +42,7 @@ export default function App() {
           className="app-general-formula"
           dangerouslySetInnerHTML={{ __html: GENERAL_FORMULA }}
         />
+        <span className="app-maclaurin-note">all examples use a = 0 (Maclaurin series)</span>
       </header>
 
       <FormulaBar
