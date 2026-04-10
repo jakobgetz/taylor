@@ -1,0 +1,28 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 24px 12px;
+  background: #fff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.app-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+}
+
+.app-sub {
+  font-size: 13px;
+  color: #94a3b8;
+}
