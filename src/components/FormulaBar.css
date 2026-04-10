@@ -12,52 +12,51 @@
 /* ── Fields ── */
 .formula-field {
   display: flex;
-  align-items: center;
-  padding: 12px 20px;
+  align-items: stretch;
+  padding: 0;
 }
 
 .formula-field--name {
   flex: 0 0 auto;
   min-width: 160px;
-  justify-content: center;
   position: relative;
 }
 
 .formula-field--short {
   flex: 0 0 auto;
-  min-width: 240px;
-  justify-content: center;
+  min-width: 200px;
 }
 
 .formula-field--long {
   flex: 1 1 0;
   overflow-x: auto;
-  padding-right: 12px;
 }
 
 .formula-field--stepper {
   flex: 0 0 auto;
   gap: 10px;
-  padding: 12px 18px;
+  padding: 0 18px;
+  align-items: center;
 }
 
 .formula-divider {
   width: 1px;
   background: #e2e8f0;
   align-self: stretch;
-  margin: 10px 0;
 }
 
 /* ── Field 1: function name button ── */
 .fn-button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 0 24px;
+  width: 100%;
   background: #2563eb;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 15px;
   font-family: inherit;
   cursor: pointer;
@@ -83,8 +82,8 @@
 /* ── Dropdown ── */
 .fn-dropdown {
   position: absolute;
-  top: calc(100% - 6px);
-  left: 20px;
+  top: 100%;
+  left: 0;
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
@@ -124,28 +123,29 @@
 
 /* ── Field 2: short form (clickable to reset) ── */
 .short-form-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 6px 12px;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
   background: none;
-  border: 1.5px solid transparent;
-  border-radius: 8px;
+  border: none;
+  border-radius: 0;
   color: #334155;
   font-size: 15px;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  transition: background 0.12s;
   line-height: 1;
 }
 
 .short-form-btn:hover {
   background: #f0fdf4;
-  border-color: #86efac;
 }
 
 .short-form-btn--active {
   background: #f0fdf4;
-  border-color: #4ade80;
+  box-shadow: inset 0 -3px 0 #4ade80;
 }
 
 .short-form-btn .katex {
@@ -158,64 +158,53 @@
   align-items: center;
   flex-wrap: nowrap;
   white-space: nowrap;
+  height: 100%;
+  padding: 0 16px;
+  user-select: none;
 }
 
 .term-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-left-width: 0;
+  padding: 0 12px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-left: 1px solid #e2e8f0;
   border-radius: 0;
   font-size: 14px;
   font-family: inherit;
   color: #1e293b;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, color 0.12s, box-shadow 0.12s;
+  transition: background 0.1s, box-shadow 0.1s, color 0.1s;
   white-space: nowrap;
-  position: relative;
-  z-index: 0;
+  user-select: none;
 }
 
 .term-chip--first {
-  border-left-width: 1.5px;
-  border-radius: 6px 0 0 6px;
-}
-
-.term-chip--last {
-  border-radius: 0 6px 6px 0;
-}
-
-.term-chip--first.term-chip--last {
-  border-radius: 6px;
+  border-left: none;
 }
 
 .term-chip:hover {
   background: #eff6ff;
-  border-color: #93c5fd;
   color: #1d4ed8;
-  z-index: 1;
 }
 
 .term-chip--selected {
   background: #fff7ed;
-  border-color: #f97316;
   color: #c2410c;
-  z-index: 2;
+  box-shadow: inset 0 -3px 0 #f97316;
 }
 
 .term-chip--in-range {
   background: #fff7ed;
-  border-color: #fb923c;
   color: #9a3412;
-  z-index: 1;
+  box-shadow: inset 0 -3px 0 #fb923c;
 }
 
 .term-chip--range-start {
-  border-color: #f97316;
-  z-index: 2;
+  box-shadow: inset 0 -3px 0 #f97316;
 }
 
 .term-chip-sign {
@@ -232,7 +221,7 @@
 }
 
 .term-chip .katex {
-  font-size: 1em;
+  font-size: 1.05em;
 }
 
 .ellipsis {
@@ -255,7 +244,6 @@
 .stepper {
   display: flex;
   align-items: center;
-  gap: 0;
   border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;

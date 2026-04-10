@@ -53,7 +53,8 @@ export function FormulaBar({
     return () => document.removeEventListener('mouseup', onMouseUp);
   }, []);
 
-  const handleChipMouseDown = (termIndex: number) => {
+  const handleChipMouseDown = (termIndex: number, e: React.MouseEvent) => {
+    e.preventDefault(); // prevent text selection during drag
     isDragging.current = true;
     dragAnchor.current = termIndex;
     const isSingle = termRange !== null && termRange[0] === termIndex && termRange[1] === termIndex;
@@ -142,7 +143,7 @@ export function FormulaBar({
                   isSingle ? 'term-chip--selected' : '',
                   isRangeStart && !isSingle ? 'term-chip--range-start' : '',
                 ].filter(Boolean).join(' ')}
-                onMouseDown={() => handleChipMouseDown(term.index)}
+                onMouseDown={(e) => handleChipMouseDown(term.index, e)}
                 onMouseEnter={() => handleChipMouseEnter(term.index)}
               >
                 {sign && <span className="term-chip-sign">{sign}</span>}
