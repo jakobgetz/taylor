@@ -28,11 +28,43 @@ const SPECIAL_ANGLES: [number, string][] = [
   [2 * Math.PI, '2π'],
 ];
 
-function getExactRadians(displayTheta: number): string | null {
+type ExactValues = { sin: string; cos: string; tan: string; cot: string; sec: string; csc: string };
+
+// k = round(theta / (π/12)); columns: [sin, cos, tan, cot, sec, csc]; '∞' = undefined
+const EXACT_TABLE: Record<number, [string, string, string, string, string, string]> = {
+  0:  ['0',      '1',       '0',       '∞',       '1',        '∞'      ],
+  2:  ['½',      '√3/2',    '√3/3',    '√3',      '2√3/3',    '2'      ],
+  3:  ['√2/2',   '√2/2',    '1',       '1',       '√2',       '√2'     ],
+  4:  ['√3/2',   '½',       '√3',      '√3/3',    '2',        '2√3/3'  ],
+  6:  ['1',      '0',       '∞',       '0',       '∞',        '1'      ],
+  8:  ['√3/2',   '−½',      '−√3',     '−√3/3',   '−2',       '2√3/3'  ],
+  9:  ['√2/2',   '−√2/2',   '−1',      '−1',      '−√2',      '√2'     ],
+  10: ['½',      '−√3/2',   '−√3/3',   '−√3',     '−2√3/3',   '2'      ],
+  12: ['0',      '−1',      '0',       '∞',       '−1',       '∞'      ],
+  14: ['−½',     '−√3/2',   '√3/3',    '√3',      '−2√3/3',   '−2'     ],
+  15: ['−√2/2',  '−√2/2',   '1',       '1',       '−√2',      '−√2'    ],
+  16: ['−√3/2',  '−½',      '√3',      '√3/3',    '−2',       '−2√3/3' ],
+  18: ['−1',     '0',       '∞',       '0',       '∞',        '−1'     ],
+  20: ['−√3/2',  '½',       '−√3',     '−√3/3',   '2',        '−2√3/3' ],
+  21: ['−√2/2',  '√2/2',    '−1',      '−1',      '√2',       '−√2'    ],
+  22: ['−½',     '√3/2',    '−√3/3',   '−√3',     '2√3/3',    '−2'     ],
+  24: ['0',      '1',       '0',       '∞',       '1',        '∞'      ],
+};
+
+function getExactAngle(displayTheta: number): string | null {
   for (const [val, label] of SPECIAL_ANGLES) {
     if (Math.abs(displayTheta - val) < 0.02) return label;
   }
   return null;
+}
+
+function getExactValues(displayTheta: number): ExactValues | null {
+  const k = Math.round(displayTheta / (Math.PI / 12));
+  const snapped = k * Math.PI / 12;
+  if (Math.abs(displayTheta - snapped) > 0.025) return null;
+  const row = EXACT_TABLE[k];
+  if (!row) return null;
+  return { sin: row[0], cos: row[1], tan: row[2], cot: row[3], sec: row[4], csc: row[5] };
 }
 
 function isUndef(v: number) {
@@ -49,20 +81,28 @@ interface FnRowProps {
   name: string;
   value: number;
   color: string;
+  exact?: string;
 }
 
-function FnRow({ dot, name, value, color }: FnRowProps) {
-  const undef = isUndef(value);
+function FnRow({ dot, name, value, color, exact }: FnRowProps) {
+  const undef = isUndef(value) || exact === '∞';
   const barWidth = undef ? 0 : Math.min(1, Math.abs(value) / 5);
   return (
     <div className="uc-fn-row">
       <div className="uc-fn-main">
         <div className="uc-fn-dot" style={{ background: dot }} />
-        <span className="uc-fn-name" dangerouslySetInnerHTML={{ __html: name }} />
+        <span className="uc-fn-name">{name}</span>
         <span className="uc-fn-eq">=</span>
-        <span className={`uc-fn-val${undef ? ' uc-fn-val--undef' : ''}`}>
-          {fmtVal(value)}
-        </span>
+        {exact && exact !== '∞' ? (
+          <>
+            <span className="uc-fn-exact">{exact}</span>
+            <span className="uc-fn-approx">≈ {value.toFixed(4)}</span>
+          </>
+        ) : (
+          <span className={`uc-fn-val${undef ? ' uc-fn-val--undef' : ''}`}>
+            {undef ? '∞' : fmtVal(value)}
+          </span>
+        )}
       </div>
       {!undef && (
         <div className="uc-fn-bar-wrap">
@@ -101,27 +141,14 @@ export function UnitCircle() {
   const px = toSvgX(cosT);
   const py = toSvgY(sinT);
 
-  // Angle arc
-  const arcR = 30;
-  const sx0 = CX + arcR;
-  const sy0 = CY;
-  const sx1 = CX + arcR * Math.cos(theta);
-  const sy1 = CY - arcR * Math.sin(theta);
-  const largeArc = Math.abs(theta) > Math.PI ? 1 : 0;
-  const sweep = theta >= 0 ? 1 : 0;
-  const showArc = Math.abs(theta) > 0.02;
-
-  // Theta label position
-  const thetaLabelDist = 0.35 * R;
-  const thetaMid = theta / 2;
-  const thetaLabelX = CX + thetaLabelDist * Math.cos(thetaMid);
-  const thetaLabelY = CY - thetaLabelDist * Math.sin(thetaMid);
-
   // Angle display
   const displayTheta = ((theta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
   const degrees = (displayTheta * 180 / Math.PI).toFixed(1);
-  const exactRad = getExactRadians(displayTheta);
-  const radians = exactRad ?? displayTheta.toFixed(4);
+  const exactAngle = getExactAngle(displayTheta);
+  const piCoeff = displayTheta / Math.PI;
+  const piLabel = exactAngle ?? `${piCoeff.toFixed(3)}π`;
+  const approxRad = displayTheta.toFixed(3);
+  const exactVals = getExactValues(displayTheta);
 
   const getAngleFromEvent = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     if (!svgRef.current) return null;
@@ -243,39 +270,7 @@ export function UnitCircle() {
             />
           )}
 
-          {/* Angle arc */}
-          {showArc && (
-            <path
-              d={`M ${sx0} ${sy0} A ${arcR} ${arcR} 0 ${largeArc} ${sweep} ${sx1} ${sy1}`}
-              fill="none"
-              stroke="#475569"
-              strokeWidth={1.5}
-            />
-          )}
-
-          {/* θ label */}
-          {showArc ? (
-            <text
-              x={thetaLabelX}
-              y={thetaLabelY}
-              fontSize={13}
-              fontStyle="italic"
-              fill="#475569"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{ userSelect: "none", pointerEvents: "none" }}
-            >θ</text>
-          ) : (
-            <text
-              x={255} y={225}
-              fontSize={13}
-              fontStyle="italic"
-              fill="#475569"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{ userSelect: "none", pointerEvents: "none" }}
-            >θ</text>
-          )}
+          {/* Angle arc and θ label removed — angle is shown in the values panel */}
 
           {/* sec line: (0,0) to (1, tanT) */}
           {showTan && (
@@ -398,18 +393,18 @@ export function UnitCircle() {
 
       <div className="uc-values">
         <div className="uc-angle">
-          <div className="uc-angle-deg">
-            θ = {degrees}<span>°</span>
+          <div className="uc-angle-pi">
+            {piLabel} <span className="uc-angle-approx">≈ {approxRad} rad</span>
           </div>
-          <div className="uc-angle-rad">{radians} rad</div>
+          <div className="uc-angle-deg">{degrees}°</div>
         </div>
 
-        <FnRow dot="#dc2626" name="sin&thinsp;θ" value={sinT} color="#dc2626" />
-        <FnRow dot="#2563eb" name="cos&thinsp;θ" value={cosT} color="#2563eb" />
-        <FnRow dot="#d97706" name="tan&thinsp;θ" value={tanT} color="#d97706" />
-        <FnRow dot="#7c3aed" name="cot&thinsp;θ" value={cotT} color="#7c3aed" />
-        <FnRow dot="#059669" name="sec&thinsp;θ" value={secT} color="#059669" />
-        <FnRow dot="#db2777" name="csc&thinsp;θ" value={cscT} color="#db2777" />
+        <FnRow dot="#dc2626" name={`sin(${piLabel})`} value={sinT} color="#dc2626" exact={exactVals?.sin} />
+        <FnRow dot="#2563eb" name={`cos(${piLabel})`} value={cosT} color="#2563eb" exact={exactVals?.cos} />
+        <FnRow dot="#d97706" name={`tan(${piLabel})`} value={tanT} color="#d97706" exact={exactVals?.tan} />
+        <FnRow dot="#7c3aed" name={`cot(${piLabel})`} value={cotT} color="#7c3aed" exact={exactVals?.cot} />
+        <FnRow dot="#059669" name={`sec(${piLabel})`} value={secT} color="#059669" exact={exactVals?.sec} />
+        <FnRow dot="#db2777" name={`csc(${piLabel})`} value={cscT} color="#db2777" exact={exactVals?.csc} />
       </div>
     </div>
   );
