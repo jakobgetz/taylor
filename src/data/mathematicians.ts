@@ -190,6 +190,7 @@ export const MATHEMATICIANS: Mathematician[] = [
     appRelated: ['geometric'],
   },
   {
+    id: 'fermat',
     name: 'Pierre de Fermat',
     birth: 1607,
     death: 1665,
