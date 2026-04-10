@@ -30,6 +30,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <span className="app-title">Taylor Series Explorer</span>
+        <span className="app-fn-label">{selectedFn.label}</span>
       </header>
 
       <FormulaBar

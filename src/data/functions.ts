@@ -8,6 +8,7 @@ export interface Term {
 export interface TaylorFunction {
   id: string;
   name: string;           // plain text label for dropdowns
+  label: string;          // full English name (e.g. "Cosine", "Natural Logarithm")
   nameLatex: string;      // KaTeX for formula bar field 1
   shortFormLatex: string; // KaTeX for formula bar field 2
   terms: Term[];
@@ -80,6 +81,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'cos',
     name: 'cos(x)',
+    label: 'Cosine',
     nameLatex: '\\cos(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{(-1)^n\\, x^{2n}}{(2n)!}',
@@ -96,6 +98,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'sin',
     name: 'sin(x)',
+    label: 'Sine',
     nameLatex: '\\sin(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{(-1)^n\\, x^{2n+1}}{(2n+1)!}',
@@ -113,6 +116,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'exp',
     name: 'eˣ',
+    label: 'Natural Exponential',
     nameLatex: 'e^{x}',
     shortFormLatex: '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}',
     exact: Math.exp,
@@ -128,6 +132,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'exp_neg',
     name: 'e⁻ˣ',
+    label: 'Negative Exponential',
     nameLatex: 'e^{-x}',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{(-1)^n x^n}{n!}',
@@ -144,6 +149,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'ln',
     name: 'ln(1+x)',
+    label: 'Natural Logarithm',
     nameLatex: '\\ln(1+x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}\\, x^n}{n}',
@@ -163,6 +169,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'geometric',
     name: '1/(1−x)',
+    label: 'Geometric Series',
     nameLatex: '\\dfrac{1}{1-x}',
     shortFormLatex: '\\displaystyle\\sum_{n=0}^{\\infty} x^n',
     exact: (x: number) => 1 / (1 - x),
@@ -178,6 +185,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'geom_neg',
     name: '1/(1+x²)',
+    label: 'Alternating Geometric Series',
     nameLatex: '\\dfrac{1}{1+x^2}',
     shortFormLatex: '\\displaystyle\\sum_{n=0}^{\\infty} (-1)^n x^{2n}',
     exact: (x: number) => 1 / (1 + x * x),
@@ -193,6 +201,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'arctan',
     name: 'arctan(x)',
+    label: 'Inverse Tangent',
     nameLatex: '\\arctan(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{(-1)^n\\, x^{2n+1}}{2n+1}',
@@ -210,6 +219,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'arcsin',
     name: 'arcsin(x)',
+    label: 'Inverse Sine',
     nameLatex: '\\arcsin(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{(2n)!}{4^n(n!)^2(2n+1)}\\,x^{2n+1}',
@@ -229,6 +239,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'sqrt',
     name: '√(1+x)',
+    label: 'Square Root',
     nameLatex: '\\sqrt{1+x}',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\binom{\\!\\tfrac{1}{2}\\!}{n}\\, x^n',
@@ -251,6 +262,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'tan',
     name: 'tan(x)',
+    label: 'Tangent',
     nameLatex: '\\tan(x)',
     shortFormLatex:
       '\\displaystyle x + \\tfrac{x^3}{3} + \\tfrac{2x^5}{15} + \\tfrac{17x^7}{315} + \\cdots',
@@ -267,6 +279,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'sinh',
     name: 'sinh(x)',
+    label: 'Hyperbolic Sine',
     nameLatex: '\\sinh(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{x^{2n+1}}{(2n+1)!}',
@@ -283,6 +296,7 @@ export const FUNCTIONS: TaylorFunction[] = [
   {
     id: 'cosh',
     name: 'cosh(x)',
+    label: 'Hyperbolic Cosine',
     nameLatex: '\\cosh(x)',
     shortFormLatex:
       '\\displaystyle\\sum_{n=0}^{\\infty} \\frac{x^{2n}}{(2n)!}',

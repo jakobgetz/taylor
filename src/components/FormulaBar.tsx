@@ -94,6 +94,7 @@ export function FormulaBar({
                 onClick={() => { onSelectFunction(fn); setDropdownOpen(false); }}
               >
                 <span dangerouslySetInnerHTML={{ __html: renderLatex(fn.nameLatex) }} />
+                <span className="fn-option-label">{fn.label}</span>
               </button>
             ))}
           </div>
