@@ -6,6 +6,7 @@ interface Props {
   fn: TaylorFunction;
   termRange: [number, number] | null;
   numTerms: number;
+  seriesLabel?: string;
 }
 
 const W = 900;
@@ -48,6 +49,22 @@ function buildPath(
   return d;
 }
 
+function piGrid(min: number, max: number): number[] {
+  const startK = Math.ceil(min / Math.PI - 1e-9);
+  const endK = Math.floor(max / Math.PI + 1e-9);
+  const ticks: number[] = [];
+  for (let k = startK; k <= endK; k++) ticks.push(k * Math.PI);
+  return ticks;
+}
+
+function fmtPi(v: number): string {
+  const k = Math.round(v / Math.PI);
+  if (k === 0) return '0';
+  if (k === 1) return 'π';
+  if (k === -1) return '-π';
+  return `${k}π`;
+}
+
 function niceGrid(min: number, max: number, maxLines = 14): number[] {
   const range = max - min;
   const rawStep = range / maxLines;
@@ -68,7 +85,7 @@ function fmt(v: number): string {
   return s.replace(/\.?0+$/, '');
 }
 
-export function CoordinateSystem({ fn, termRange, numTerms }: Props) {
+export function CoordinateSystem({ fn, termRange, numTerms, seriesLabel = 'Taylor' }: Props) {
   const [xMin, xMax] = fn.xRange;
   const [yMin, yMax] = fn.yRange;
 
@@ -83,7 +100,7 @@ export function CoordinateSystem({ fn, termRange, numTerms }: Props) {
   const axisX = Math.max(xMin, Math.min(xMax, 0));
   const axisY = Math.max(yMin, Math.min(yMax, 0));
 
-  const xGrid = useMemo(() => niceGrid(xMin, xMax), [xMin, xMax]);
+  const xGrid = useMemo(() => fn.piAxis ? piGrid(xMin, xMax) : niceGrid(xMin, xMax), [xMin, xMax, fn.piAxis]);
   const yGrid = useMemo(() => niceGrid(yMin, yMax), [yMin, yMax]);
 
   // Full Taylor partial sum using numTerms visible terms
@@ -162,7 +179,7 @@ export function CoordinateSystem({ fn, termRange, numTerms }: Props) {
         {xGrid.map((v) =>
           Math.abs(v) < 1e-9 ? null : (
             <text key={`xl-${v}`} x={toSvgX(v)} y={toSvgY(axisY) + 16} className="tick-label tick-label--x">
-              {fmt(v)}
+              {fn.piAxis ? fmtPi(v) : fmt(v)}
             </text>
           ),
         )}
@@ -209,7 +226,7 @@ export function CoordinateSystem({ fn, termRange, numTerms }: Props) {
             className={`legend-swatch ${termRange !== null ? 'legend-swatch--taylor-dim' : 'legend-swatch--taylor'}`}
           />
           <text x={44} y={42} className="legend-label">
-            Taylor sum ({numTerms} terms)
+            {seriesLabel} sum ({numTerms} terms)
           </text>
 
           {/* range / single term */}

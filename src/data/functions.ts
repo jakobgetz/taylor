@@ -11,6 +11,7 @@ export interface TaylorFunction {
   label: string;          // full English name (e.g. "Cosine", "Natural Logarithm")
   nameLatex: string;      // KaTeX for formula bar field 1
   shortFormLatex: string; // KaTeX for formula bar field 2
+  piAxis?: boolean;       // use π-spaced x-axis ticks instead of numeric
   terms: Term[];
   exact: (x: number) => number;
   xRange: [number, number];
