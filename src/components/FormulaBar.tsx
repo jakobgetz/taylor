@@ -132,38 +132,38 @@ export function FormulaBar({
               termRange !== null &&
               termRange[0] === termRange[1] &&
               term.index === termRange[0];
+            const isFirst = i === 0;
+            const isLast = i === visibleTerms.length - 1;
+
+            const sign = i === 0 ? null : (term.sign === '+' ? '+' : '−');
 
             return (
-              <span key={term.index} className="term-group">
-                {i > 0 && (
-                  <span className={`term-operator ${inRange ? 'term-operator--in-range' : ''}`}>
-                    {term.sign === '+' ? '+' : '−'}
-                  </span>
-                )}
-
-                <button
-                  className={[
-                    'term-chip',
-                    inRange ? 'term-chip--in-range' : '',
-                    isSingle ? 'term-chip--selected' : '',
-                    isRangeStart && !isSingle ? 'term-chip--range-start' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={(e) => handleTermClick(term.index, e)}
-                  title={
-                    termRange === null
-                      ? 'Click to isolate · Shift+click to start range'
-                      : 'Click to reset · Shift+click to extend range'
-                  }
-                >
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: renderLatex(term.latex),
-                    }}
-                  />
-                </button>
-              </span>
+              <button
+                key={term.index}
+                className={[
+                  'term-chip',
+                  isFirst ? 'term-chip--first' : '',
+                  isLast ? 'term-chip--last' : '',
+                  inRange ? 'term-chip--in-range' : '',
+                  isSingle ? 'term-chip--selected' : '',
+                  isRangeStart && !isSingle ? 'term-chip--range-start' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={(e) => handleTermClick(term.index, e)}
+                title={
+                  termRange === null
+                    ? 'Click to isolate · Shift+click to start range'
+                    : 'Click to reset · Shift+click to extend range'
+                }
+              >
+                {sign && <span className="term-chip-sign">{sign}</span>}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: renderLatex(term.latex),
+                  }}
+                />
+              </button>
             );
           })}
           <span className="ellipsis">&thinsp;+&thinsp;&hellip;</span>
