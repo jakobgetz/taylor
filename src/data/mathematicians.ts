@@ -73,6 +73,23 @@ export const ALL_FIELDS: Field[] = [
 
 export const MATHEMATICIANS: Mathematician[] = [
   {
+    id: 'pythagoras',
+    name: 'Pythagoras',
+    birth: -570,
+    death: -495,
+    nationality: 'Greek',
+    fields: ['Geometry', 'Number Theory'],
+    era: 'Ancient',
+    portraitFile: 'Pythagoras_in_the_Roman_Forum,_Colosseum.jpg',
+    shortBio: 'Pythagoras of Samos was an ancient Greek philosopher and mathematician who founded the Pythagorean school, which held that numbers are the ultimate reality underlying all of nature. His influence stretched from geometry and music theory to mysticism and cosmology.',
+    quote: 'Number is the ruler of forms and ideas, and the cause of gods and daemons.',
+    contributions: [
+      { title: 'Pythagorean Theorem', year: -530, description: 'Formalized the relationship a² + b² = c² for right triangles, though likely known empirically before him. His school provided one of the earliest known proofs, making it a cornerstone of geometry.' },
+      { title: 'Irrationality of √2', description: 'The Pythagorean school discovered that √2 cannot be expressed as a ratio of integers — a result so shocking it reportedly caused a crisis within the brotherhood, as it contradicted their belief that all is number (ratio).' },
+      { title: 'Harmony & Number', description: 'Discovered that musical intervals correspond to simple integer ratios (e.g., octave = 2:1, fifth = 3:2), founding the mathematical theory of music and influencing centuries of natural philosophy.' },
+    ],
+  },
+  {
     id: 'euclid',
     name: 'Euclid',
     birth: -325,
