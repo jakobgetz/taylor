@@ -8,6 +8,7 @@ import { FormulaBar } from './components/FormulaBar';
 import { CoordinateSystem } from './components/CoordinateSystem';
 import { UnitCircle } from './components/UnitCircle';
 import { Mathematicians } from './components/Mathematicians';
+import { Cheatsheet } from './components/Cheatsheet';
 import './App.css';
 
 const DEFAULT_NUM_TERMS = 8;
@@ -23,7 +24,7 @@ const FOURIER_FORMULA = katex.renderToString(
 );
 
 export default function App() {
-  const [mode, setMode] = useState<'taylor' | 'fourier' | 'geometric' | 'mathematicians'>('taylor');
+  const [mode, setMode] = useState<'taylor' | 'fourier' | 'geometric' | 'mathematicians' | 'cheatsheet'>('taylor');
   const [modeOpen, setModeOpen] = useState(false);
   const modeRef = useRef<HTMLDivElement>(null);
   const [selectedFn, setSelectedFn] = useState<TaylorFunction>(FUNCTIONS[0]);
@@ -40,9 +41,9 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleModeChange = (newMode: 'taylor' | 'fourier' | 'geometric' | 'mathematicians') => {
+  const handleModeChange = (newMode: 'taylor' | 'fourier' | 'geometric' | 'mathematicians' | 'cheatsheet') => {
     setMode(newMode);
-    if (newMode !== 'geometric' && newMode !== 'mathematicians') {
+    if (newMode !== 'geometric' && newMode !== 'mathematicians' && newMode !== 'cheatsheet') {
       setSelectedFn(newMode === 'taylor' ? FUNCTIONS[0] : FOURIER_FUNCTIONS[0]);
     }
     setTermRange(null);
@@ -74,6 +75,7 @@ export default function App() {
   const modeTitle = mode === 'taylor' ? 'Taylor Series Explorer'
     : mode === 'fourier' ? 'Fourier Series Explorer'
     : mode === 'geometric' ? 'Geometric Functions'
+    : mode === 'cheatsheet' ? 'Formula Cheatsheet'
     : 'Mathematicians';
 
   return (
@@ -105,10 +107,14 @@ export default function App() {
                 className={`mode-option ${mode === 'mathematicians' ? 'mode-option--active' : ''}`}
                 onClick={() => handleModeChange('mathematicians')}
               >Mathematicians</button>
+              <button
+                className={`mode-option ${mode === 'cheatsheet' ? 'mode-option--active' : ''}`}
+                onClick={() => handleModeChange('cheatsheet')}
+              >Formula Cheatsheet</button>
             </div>
           )}
         </div>
-        {mode !== 'geometric' && mode !== 'mathematicians' && (
+        {mode !== 'geometric' && mode !== 'mathematicians' && mode !== 'cheatsheet' && (
           <>
             <span className="app-fn-label">{selectedFn.label}</span>
             <span className="app-general-formula" dangerouslySetInnerHTML={{ __html: formula }} />
@@ -121,12 +127,17 @@ export default function App() {
         {mode === 'mathematicians' && (
           <span className="app-geo-subtitle">↑ ↓ arrow keys to navigate · click to explore</span>
         )}
+        {mode === 'cheatsheet' && (
+          <span className="app-geo-subtitle">Search or browse 11 categories · 90 formulas</span>
+        )}
       </header>
 
       {mode === 'geometric' ? (
         <UnitCircle />
       ) : mode === 'mathematicians' ? (
         <Mathematicians />
+      ) : mode === 'cheatsheet' ? (
+        <Cheatsheet />
       ) : (
         <>
           <FormulaBar

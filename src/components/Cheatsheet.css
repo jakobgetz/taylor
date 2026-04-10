@@ -1,0 +1,308 @@
+/* ── Root layout ────────────────────────────────────────────────── */
+.cs-root {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────── */
+.cs-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: #12121f;
+  border-right: 1px solid #2a2a40;
+  overflow-y: auto;
+}
+
+.cs-sidebar-inner {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Search */
+.cs-search-wrap {
+  position: relative;
+}
+
+.cs-search {
+  width: 100%;
+  box-sizing: border-box;
+  background: #1e1e30;
+  border: 1px solid #2e2e45;
+  border-radius: 8px;
+  color: #e0e0f0;
+  padding: 8px 32px 8px 12px;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cs-search:focus {
+  border-color: #5a8af0;
+}
+
+.cs-search::placeholder {
+  color: #555570;
+}
+
+.cs-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px;
+  line-height: 1;
+}
+
+.cs-search-clear:hover { color: #ccc; }
+
+/* Nav */
+.cs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cs-nav-all {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 4px;
+}
+
+.cs-nav-all:hover { background: #2a2a40; color: #ccc; }
+.cs-nav-all--active { background: #2a2a40; color: #e0e0f0; }
+
+.cs-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #9090b0;
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+}
+
+.cs-nav-item:hover {
+  background: color-mix(in srgb, var(--cs-color) 12%, #1e1e30);
+  color: #e0e0f0;
+}
+
+.cs-nav-item--active {
+  background: color-mix(in srgb, var(--cs-color) 20%, #1e1e30);
+  color: #e0e0f0;
+  border-left: 3px solid var(--cs-color);
+  padding-left: 7px;
+}
+
+.cs-nav-icon {
+  font-size: 0.7rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--cs-color);
+  font-weight: bold;
+}
+
+.cs-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cs-nav-badge {
+  font-size: 0.68rem;
+  background: #2a2a40;
+  border-radius: 10px;
+  padding: 1px 6px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+/* ── Main content ───────────────────────────────────────────────── */
+.cs-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.cs-search-summary {
+  color: #888;
+  font-size: 0.82rem;
+  padding: 0 4px;
+  margin-bottom: -20px;
+}
+
+/* Empty state */
+.cs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.cs-empty span { font-size: 2.5rem; }
+.cs-empty p { margin: 0; }
+.cs-empty strong { color: #999; }
+
+.cs-empty button {
+  margin-top: 8px;
+  background: #2a2a40;
+  border: none;
+  border-radius: 6px;
+  color: #aaa;
+  cursor: pointer;
+  padding: 6px 16px;
+  font-size: 0.82rem;
+}
+
+.cs-empty button:hover { background: #353555; color: #ddd; }
+
+/* ── Category section ───────────────────────────────────────────── */
+.cs-category {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cs-category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--cs-color);
+}
+
+.cs-category-icon {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--cs-color);
+  background: color-mix(in srgb, var(--cs-color) 15%, #1a1a2e);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: monospace;
+}
+
+.cs-category-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e0e0f0;
+  letter-spacing: 0.01em;
+}
+
+.cs-category-count {
+  font-size: 0.72rem;
+  color: #666;
+  background: #1e1e30;
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
+/* ── Formula grid ───────────────────────────────────────────────── */
+.cs-formula-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+/* ── Formula card ───────────────────────────────────────────────── */
+.cs-formula-card {
+  background: #1e1e30;
+  border: 1px solid #2a2a40;
+  border-left: 3px solid var(--cs-color);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.cs-formula-card:hover {
+  border-color: var(--cs-color);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--cs-color) 15%, transparent);
+  transform: translateY(-1px);
+}
+
+.cs-formula-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-color);
+}
+
+.cs-formula-math {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 4px;
+  overflow-x: auto;
+}
+
+/* KaTeX sizing */
+.cs-formula-math .katex {
+  font-size: 1.05em;
+  color: #e8e8f8;
+}
+
+.cs-formula-note {
+  font-size: 0.72rem;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ── Scrollbar styling ──────────────────────────────────────────── */
+.cs-sidebar::-webkit-scrollbar,
+.cs-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cs-sidebar::-webkit-scrollbar-track,
+.cs-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cs-sidebar::-webkit-scrollbar-thumb,
+.cs-main::-webkit-scrollbar-thumb {
+  background: #2e2e45;
+  border-radius: 3px;
+}
+
+.cs-sidebar::-webkit-scrollbar-thumb:hover,
+.cs-main::-webkit-scrollbar-thumb:hover {
+  background: #3e3e60;
+}

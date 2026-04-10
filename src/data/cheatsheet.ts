@@ -1,0 +1,198 @@
+export interface Formula {
+  name: string;
+  latex: string;
+  note?: string;
+}
+
+export interface Category {
+  id: string;
+  title: string;
+  icon: string;
+  color: string;
+  formulas: Formula[];
+}
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'powers',
+    title: 'Power & Exponent Laws',
+    icon: 'ⁿ',
+    color: '#6c8ebf',
+    formulas: [
+      { name: 'Product rule', latex: 'a^m \\cdot a^n = a^{m+n}' },
+      { name: 'Quotient rule', latex: '\\dfrac{a^m}{a^n} = a^{m-n}' },
+      { name: 'Power of a power', latex: '(a^m)^n = a^{mn}' },
+      { name: 'Power of a product', latex: '(ab)^n = a^n b^n' },
+      { name: 'Zero exponent', latex: 'a^0 = 1 \\quad (a \\neq 0)' },
+      { name: 'Negative exponent', latex: 'a^{-n} = \\dfrac{1}{a^n}' },
+      { name: 'Fractional exponent', latex: 'a^{1/n} = \\sqrt[n]{a}' },
+      { name: 'General fractional', latex: 'a^{m/n} = \\sqrt[n]{a^m}' },
+    ],
+  },
+  {
+    id: 'logs',
+    title: 'Logarithm Laws',
+    icon: 'log',
+    color: '#82b366',
+    formulas: [
+      { name: 'Product', latex: '\\log(ab) = \\log a + \\log b' },
+      { name: 'Quotient', latex: '\\log\\!\\left(\\dfrac{a}{b}\\right) = \\log a - \\log b' },
+      { name: 'Power', latex: '\\log(a^n) = n\\log a' },
+      { name: 'Change of base', latex: '\\log_b a = \\dfrac{\\ln a}{\\ln b}' },
+      { name: 'Identity', latex: '\\log_b b = 1, \\quad \\log_b 1 = 0' },
+      { name: 'Inverse with e', latex: 'e^{\\ln x} = x, \\quad \\ln(e^x) = x' },
+      { name: 'Natural log of 1', latex: '\\ln 1 = 0' },
+    ],
+  },
+  {
+    id: 'algebra',
+    title: 'Binomial & Algebra',
+    icon: '(a+b)',
+    color: '#d6a85a',
+    formulas: [
+      { name: 'Square of sum', latex: '(a+b)^2 = a^2 + 2ab + b^2' },
+      { name: 'Square of difference', latex: '(a-b)^2 = a^2 - 2ab + b^2' },
+      { name: 'Difference of squares', latex: 'a^2 - b^2 = (a+b)(a-b)' },
+      { name: 'Cube of sum', latex: '(a+b)^3 = a^3 + 3a^2 b + 3ab^2 + b^3' },
+      { name: 'Cube of difference', latex: '(a-b)^3 = a^3 - 3a^2 b + 3ab^2 - b^3' },
+      { name: 'Binomial theorem', latex: '(a+b)^n = \\displaystyle\\sum_{k=0}^{n}\\binom{n}{k}a^{n-k}b^k' },
+      { name: 'Binomial coefficient', latex: '\\binom{n}{k} = \\dfrac{n!}{k!\\,(n-k)!}' },
+      { name: 'Quadratic formula', latex: 'x = \\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}', note: 'for ax² + bx + c = 0' },
+    ],
+  },
+  {
+    id: 'factoring',
+    title: 'Factorization',
+    icon: '÷',
+    color: '#b85450',
+    formulas: [
+      { name: 'Difference of squares', latex: 'a^2 - b^2 = (a+b)(a-b)' },
+      { name: 'Sum of cubes', latex: 'a^3 + b^3 = (a+b)(a^2 - ab + b^2)' },
+      { name: 'Difference of cubes', latex: 'a^3 - b^3 = (a-b)(a^2 + ab + b^2)' },
+      { name: 'Perfect square trinomial', latex: 'a^2 \\pm 2ab + b^2 = (a \\pm b)^2' },
+      { name: 'General difference of powers', latex: 'a^n - b^n = (a-b)(a^{n-1}+a^{n-2}b+\\cdots+b^{n-1})' },
+      { name: 'Factor by grouping', latex: 'ac + ad + bc + bd = (a+b)(c+d)', note: 'group pairs and factor' },
+    ],
+  },
+  {
+    id: 'partial-fractions',
+    title: 'Partial Fractions',
+    icon: 'A/B',
+    color: '#9673a6',
+    formulas: [
+      { name: 'Distinct linear factors', latex: '\\dfrac{P(x)}{(x-a)(x-b)} = \\dfrac{A}{x-a}+\\dfrac{B}{x-b}' },
+      { name: 'Repeated linear factor', latex: '\\dfrac{P(x)}{(x-a)^2} = \\dfrac{A}{x-a}+\\dfrac{B}{(x-a)^2}' },
+      { name: 'Irreducible quadratic', latex: '\\dfrac{P(x)}{(x-a)(x^2+bx+c)} = \\dfrac{A}{x-a}+\\dfrac{Bx+C}{x^2+bx+c}' },
+      { name: 'Finding coefficients', latex: '\\text{Multiply both sides by denominator, set } x = \\text{root}', note: 'or compare coefficients' },
+      { name: 'Degree check', latex: '\\deg P < \\deg Q \\text{ required; else do polynomial division first}' },
+    ],
+  },
+  {
+    id: 'trig',
+    title: 'Trigonometric Identities',
+    icon: 'sin',
+    color: '#4da1a9',
+    formulas: [
+      { name: 'Pythagorean identity', latex: '\\sin^2 x + \\cos^2 x = 1' },
+      { name: 'Pythagorean (tan)', latex: '1 + \\tan^2 x = \\sec^2 x' },
+      { name: 'Pythagorean (cot)', latex: '1 + \\cot^2 x = \\csc^2 x' },
+      { name: 'Angle addition (sin)', latex: '\\sin(a \\pm b) = \\sin a\\cos b \\pm \\cos a\\sin b' },
+      { name: 'Angle addition (cos)', latex: '\\cos(a \\pm b) = \\cos a\\cos b \\mp \\sin a\\sin b' },
+      { name: 'Angle addition (tan)', latex: '\\tan(a \\pm b) = \\dfrac{\\tan a \\pm \\tan b}{1 \\mp \\tan a\\tan b}' },
+      { name: 'Double angle (sin)', latex: '\\sin(2x) = 2\\sin x\\cos x' },
+      { name: 'Double angle (cos)', latex: '\\cos(2x) = \\cos^2 x - \\sin^2 x = 2\\cos^2 x - 1 = 1 - 2\\sin^2 x' },
+      { name: 'Double angle (tan)', latex: '\\tan(2x) = \\dfrac{2\\tan x}{1 - \\tan^2 x}' },
+      { name: 'Half angle (sin)', latex: '\\sin^2 x = \\dfrac{1-\\cos(2x)}{2}' },
+      { name: 'Half angle (cos)', latex: '\\cos^2 x = \\dfrac{1+\\cos(2x)}{2}' },
+      { name: 'Product to sum', latex: '\\sin a\\sin b = \\tfrac{1}{2}[\\cos(a-b)-\\cos(a+b)]' },
+    ],
+  },
+  {
+    id: 'euler',
+    title: "Euler & Complex Numbers",
+    icon: 'ℂ',
+    color: '#e07b54',
+    formulas: [
+      { name: "Euler's formula", latex: 'e^{ix} = \\cos x + i\\sin x' },
+      { name: "Euler's identity", latex: 'e^{i\\pi} + 1 = 0', note: 'often called the most beautiful equation' },
+      { name: 'Cosine from exp', latex: '\\cos x = \\dfrac{e^{ix}+e^{-ix}}{2}' },
+      { name: 'Sine from exp', latex: '\\sin x = \\dfrac{e^{ix}-e^{-ix}}{2i}' },
+      { name: "De Moivre's theorem", latex: '(\\cos\\theta + i\\sin\\theta)^n = \\cos(n\\theta)+i\\sin(n\\theta)' },
+      { name: 'Complex modulus', latex: '|a+bi| = \\sqrt{a^2+b^2}' },
+      { name: 'Complex conjugate', latex: '\\overline{a+bi} = a-bi, \\quad (a+bi)(a-bi)=a^2+b^2' },
+    ],
+  },
+  {
+    id: 'derivatives',
+    title: 'Derivatives',
+    icon: "f'",
+    color: '#5a8a72',
+    formulas: [
+      { name: 'Power rule', latex: '\\dfrac{d}{dx}\\left[x^n\\right] = nx^{n-1}' },
+      { name: 'Exponential', latex: '\\dfrac{d}{dx}\\left[e^x\\right] = e^x' },
+      { name: 'General exponential', latex: '\\dfrac{d}{dx}\\left[a^x\\right] = a^x \\ln a' },
+      { name: 'Natural log', latex: '\\dfrac{d}{dx}\\left[\\ln x\\right] = \\dfrac{1}{x}' },
+      { name: 'Sine', latex: '\\dfrac{d}{dx}\\left[\\sin x\\right] = \\cos x' },
+      { name: 'Cosine', latex: '\\dfrac{d}{dx}\\left[\\cos x\\right] = -\\sin x' },
+      { name: 'Tangent', latex: '\\dfrac{d}{dx}\\left[\\tan x\\right] = \\sec^2 x' },
+      { name: 'Arcsin', latex: '\\dfrac{d}{dx}\\left[\\arcsin x\\right] = \\dfrac{1}{\\sqrt{1-x^2}}' },
+      { name: 'Arctan', latex: '\\dfrac{d}{dx}\\left[\\arctan x\\right] = \\dfrac{1}{1+x^2}' },
+      { name: 'Product rule', latex: '(fg)^{\\prime} = f^{\\prime}g + fg^{\\prime}' },
+      { name: 'Quotient rule', latex: '\\left(\\dfrac{f}{g}\\right)^{\\!\\prime} = \\dfrac{f^{\\prime}g - fg^{\\prime}}{g^2}' },
+      { name: 'Chain rule', latex: '\\dfrac{d}{dx}\\bigl[f(g(x))\\bigr] = f^{\\prime}(g(x))\\cdot g^{\\prime}(x)' },
+    ],
+  },
+  {
+    id: 'integrals',
+    title: 'Integrals',
+    icon: '∫',
+    color: '#7b68b5',
+    formulas: [
+      { name: 'Power rule', latex: '\\int x^n\\,dx = \\dfrac{x^{n+1}}{n+1} + C \\quad (n\\neq -1)' },
+      { name: 'Reciprocal', latex: '\\int \\dfrac{1}{x}\\,dx = \\ln|x| + C' },
+      { name: 'Exponential', latex: '\\int e^x\\,dx = e^x + C' },
+      { name: 'General exponential', latex: '\\int a^x\\,dx = \\dfrac{a^x}{\\ln a} + C' },
+      { name: 'Sine', latex: '\\int \\sin x\\,dx = -\\cos x + C' },
+      { name: 'Cosine', latex: '\\int \\cos x\\,dx = \\sin x + C' },
+      { name: 'Secant squared', latex: '\\int \\sec^2 x\\,dx = \\tan x + C' },
+      { name: 'Arctan form', latex: '\\int \\dfrac{1}{1+x^2}\\,dx = \\arctan x + C' },
+      { name: 'Arcsin form', latex: '\\int \\dfrac{1}{\\sqrt{1-x^2}}\\,dx = \\arcsin x + C' },
+      { name: 'Integration by parts', latex: '\\int u\\,dv = uv - \\int v\\,du', note: 'choose u = LIATE order' },
+      { name: 'Substitution', latex: '\\int f(g(x))g^{\\prime}(x)\\,dx = \\int f(u)\\,du \\quad (u=g(x))' },
+      { name: 'Definite integral', latex: '\\int_a^b f(x)\\,dx = F(b) - F(a)', note: 'fundamental theorem' },
+    ],
+  },
+  {
+    id: 'limits',
+    title: 'Limits & Series',
+    icon: 'lim',
+    color: '#c06040',
+    formulas: [
+      { name: "L'Hôpital's rule", latex: '\\lim_{x\\to a}\\dfrac{f(x)}{g(x)} = \\lim_{x\\to a}\\dfrac{f^{\\prime}(x)}{g^{\\prime}(x)}', note: 'when 0/0 or ∞/∞' },
+      { name: 'Sinc limit', latex: '\\lim_{x\\to 0}\\dfrac{\\sin x}{x} = 1' },
+      { name: 'Definition of e', latex: '\\lim_{n\\to\\infty}\\left(1+\\dfrac{1}{n}\\right)^n = e' },
+      { name: 'Geometric series (finite)', latex: '\\displaystyle\\sum_{k=0}^{n} r^k = \\dfrac{1-r^{n+1}}{1-r}' },
+      { name: 'Geometric series (infinite)', latex: '\\displaystyle\\sum_{k=0}^{\\infty} r^k = \\dfrac{1}{1-r} \\quad (|r|<1)' },
+      { name: 'Taylor / Maclaurin series', latex: 'f(x) = \\displaystyle\\sum_{n=0}^{\\infty}\\dfrac{f^{(n)}(a)}{n!}(x-a)^n' },
+      { name: 'e^x series', latex: 'e^x = \\displaystyle\\sum_{n=0}^{\\infty}\\dfrac{x^n}{n!}' },
+      { name: 'sin x series', latex: '\\sin x = \\displaystyle\\sum_{n=0}^{\\infty}\\dfrac{(-1)^n x^{2n+1}}{(2n+1)!}' },
+      { name: 'cos x series', latex: '\\cos x = \\displaystyle\\sum_{n=0}^{\\infty}\\dfrac{(-1)^n x^{2n}}{(2n)!}' },
+      { name: 'ln(1+x) series', latex: '\\ln(1+x) = \\displaystyle\\sum_{n=1}^{\\infty}\\dfrac{(-1)^{n+1}x^n}{n} \\quad (|x|\\leq 1)' },
+    ],
+  },
+  {
+    id: 'linear-algebra',
+    title: 'Linear Algebra',
+    icon: '[]',
+    color: '#708090',
+    formulas: [
+      { name: '2×2 determinant', latex: '\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix} = ad - bc' },
+      { name: '2×2 inverse', latex: '\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}^{-1} = \\dfrac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}' },
+      { name: 'Dot product', latex: '\\mathbf{a}\\cdot\\mathbf{b} = |\\mathbf{a}||\\mathbf{b}|\\cos\\theta = a_1b_1+a_2b_2+a_3b_3' },
+      { name: 'Cross product magnitude', latex: '|\\mathbf{a}\\times\\mathbf{b}| = |\\mathbf{a}||\\mathbf{b}|\\sin\\theta' },
+      { name: 'Eigenvalue equation', latex: 'A\\mathbf{v} = \\lambda\\mathbf{v}', note: 'v is eigenvector, λ is eigenvalue' },
+      { name: 'Characteristic polynomial', latex: '\\det(A - \\lambda I) = 0', note: 'solve for eigenvalues' },
+      { name: 'Rank-nullity theorem', latex: '\\text{rank}(A) + \\text{nullity}(A) = n', note: 'n = number of columns' },
+    ],
+  },
+];
