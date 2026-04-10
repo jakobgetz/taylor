@@ -31,12 +31,12 @@ export function FormulaBar({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const dragAnchor = useRef<number | null>(null);
+  const isDragging = useRef(false);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     };
@@ -44,18 +44,28 @@ export function FormulaBar({
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleTermClick = (termIndex: number, e: React.MouseEvent) => {
-    if (e.shiftKey && termRange !== null) {
-      // Extend the range: anchor stays at termRange[0], stretch to new index
-      const anchor = termRange[0];
-      const lo = Math.min(anchor, termIndex);
-      const hi = Math.max(anchor, termIndex);
-      onSelectTermRange([lo, hi]);
-    } else {
-      // Single click: toggle selection of this term
-      const isSingle = termRange !== null && termRange[0] === termIndex && termRange[1] === termIndex;
-      onSelectTermRange(isSingle ? null : [termIndex, termIndex]);
-    }
+  useEffect(() => {
+    const onMouseUp = () => {
+      isDragging.current = false;
+      dragAnchor.current = null;
+    };
+    document.addEventListener('mouseup', onMouseUp);
+    return () => document.removeEventListener('mouseup', onMouseUp);
+  }, []);
+
+  const handleChipMouseDown = (termIndex: number) => {
+    isDragging.current = true;
+    dragAnchor.current = termIndex;
+    const isSingle = termRange !== null && termRange[0] === termIndex && termRange[1] === termIndex;
+    onSelectTermRange(isSingle ? null : [termIndex, termIndex]);
+  };
+
+  const handleChipMouseEnter = (termIndex: number) => {
+    if (!isDragging.current || dragAnchor.current === null) return;
+    const anchor = dragAnchor.current;
+    const lo = Math.min(anchor, termIndex);
+    const hi = Math.max(anchor, termIndex);
+    onSelectTermRange([lo, hi]);
   };
 
   const visibleTerms = selected.terms.slice(0, numTerms);
@@ -70,11 +80,7 @@ export function FormulaBar({
           onClick={() => setDropdownOpen((o) => !o)}
           title="Choose a function"
         >
-          <span
-            dangerouslySetInnerHTML={{
-              __html: renderLatex(selected.nameLatex),
-            }}
-          />
+          <span dangerouslySetInnerHTML={{ __html: renderLatex(selected.nameLatex) }} />
           <span className="fn-arrow">{dropdownOpen ? '▴' : '▾'}</span>
         </button>
 
@@ -84,16 +90,9 @@ export function FormulaBar({
               <button
                 key={fn.id}
                 className={`fn-option ${fn.id === selected.id ? 'fn-option--active' : ''}`}
-                onClick={() => {
-                  onSelectFunction(fn);
-                  setDropdownOpen(false);
-                }}
+                onClick={() => { onSelectFunction(fn); setDropdownOpen(false); }}
               >
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: renderLatex(fn.nameLatex),
-                  }}
-                />
+                <span dangerouslySetInnerHTML={{ __html: renderLatex(fn.nameLatex) }} />
               </button>
             ))}
           </div>
@@ -109,19 +108,15 @@ export function FormulaBar({
           onClick={() => onSelectTermRange(null)}
           title="Show full Taylor series"
         >
-          <span
-            dangerouslySetInnerHTML={{
-              __html: renderLatex(selected.shortFormLatex),
-            }}
-          />
+          <span dangerouslySetInnerHTML={{ __html: renderLatex(selected.shortFormLatex) }} />
         </button>
       </div>
 
       <div className="formula-divider" />
 
-      {/* ── Field 3: expanded long form with range selection ── */}
+      {/* ── Field 3: expanded long form — drag to select range ── */}
       <div className="formula-field formula-field--long">
-        <div className="long-form">
+        <div className="long-form" onDragStart={(e) => e.preventDefault()}>
           {visibleTerms.map((term, i) => {
             const inRange =
               termRange !== null &&
@@ -134,7 +129,6 @@ export function FormulaBar({
               term.index === termRange[0];
             const isFirst = i === 0;
             const isLast = i === visibleTerms.length - 1;
-
             const sign = i === 0 ? null : (term.sign === '+' ? '+' : '−');
 
             return (
@@ -147,22 +141,12 @@ export function FormulaBar({
                   inRange ? 'term-chip--in-range' : '',
                   isSingle ? 'term-chip--selected' : '',
                   isRangeStart && !isSingle ? 'term-chip--range-start' : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={(e) => handleTermClick(term.index, e)}
-                title={
-                  termRange === null
-                    ? 'Click to isolate · Shift+click to start range'
-                    : 'Click to reset · Shift+click to extend range'
-                }
+                ].filter(Boolean).join(' ')}
+                onMouseDown={() => handleChipMouseDown(term.index)}
+                onMouseEnter={() => handleChipMouseEnter(term.index)}
               >
                 {sign && <span className="term-chip-sign">{sign}</span>}
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: renderLatex(term.latex),
-                  }}
-                />
+                <span dangerouslySetInnerHTML={{ __html: renderLatex(term.latex) }} />
               </button>
             );
           })}
@@ -181,18 +165,14 @@ export function FormulaBar({
             onClick={() => onNumTermsChange(numTerms - 1)}
             disabled={numTerms <= 1}
             aria-label="Fewer terms"
-          >
-            −
-          </button>
+          >−</button>
           <span className="stepper-value">{numTerms}</span>
           <button
             className="stepper-btn"
             onClick={() => onNumTermsChange(numTerms + 1)}
             disabled={numTerms >= maxTerms}
             aria-label="More terms"
-          >
-            +
-          </button>
+          >+</button>
         </div>
       </div>
     </div>

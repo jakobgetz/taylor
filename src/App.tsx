@@ -30,9 +30,6 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <span className="app-title">Taylor Series Explorer</span>
-        <span className="app-sub">
-          Click a term to isolate it&ensp;·&ensp;Shift+click to extend range&ensp;·&ensp;Click <em>Σ</em> to show all
-        </span>
       </header>
 
       <FormulaBar
