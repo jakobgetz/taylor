@@ -152,14 +152,6 @@ export function UnitCircle() {
     transition: 'opacity 0.15s, stroke-width 0.15s',
   });
 
-  // Right-angle marker (5×5 square) at a corner; ox/oy = corner in math coords, ax/ay and bx/by = the two directions (unit vecs in math space)
-  const rightAngle = (ox: number, oy: number, ax: number, ay: number, bx: number, by: number, s = 0.07) => {
-    const p1x = toSvgX(ox + ax * s), p1y = toSvgY(oy + ay * s);
-    const p2x = toSvgX(ox + ax * s + bx * s), p2y = toSvgY(oy + ay * s + by * s);
-    const p3x = toSvgX(ox + bx * s), p3y = toSvgY(oy + by * s);
-    return `M${p1x},${p1y} L${p2x},${p2y} L${p3x},${p3y}`;
-  };
-
   // Label positions along sec/csc lines (clamped so they stay on screen)
   const secLabelT  = showTan ? Math.min(0.6, 1.0 / Math.max(1, Math.abs(secT))) : 0;
   const secLblX    = CX + secLabelT * R + 14;
@@ -346,14 +338,6 @@ export function UnitCircle() {
             stroke="#2563eb"
             {...seg('cos', 2.5)}
           />
-          {/* right-angle mark at (cosT, 0) between cos and sin */}
-          {Math.abs(sinT) > 0.1 && Math.abs(cosT) > 0.1 && (
-            <path
-              d={rightAngle(cosT, 0, -Math.sign(cosT), 0, 0, Math.sign(sinT))}
-              fill="none" stroke="#94a3b8" strokeWidth={1}
-              style={{ pointerEvents: 'none' }}
-            />
-          )}
           <text
             x={(CX + toSvgX(cosT)) / 2}
             y={CY + (sinT >= 0 ? 14 : -6)}
@@ -379,14 +363,6 @@ export function UnitCircle() {
           {/* tan segment: (1, 0) to (1, tanT) */}
           {showTan && (
             <>
-              {/* right-angle mark at (1, 0) between x-axis and tan */}
-              {Math.abs(tanT) > 0.1 && (
-                <path
-                  d={rightAngle(1, 0, -1, 0, 0, Math.sign(tanT))}
-                  fill="none" stroke="#94a3b8" strokeWidth={1}
-                  style={{ pointerEvents: 'none' }}
-                />
-              )}
               <line
                 x1={toSvgX(1)} y1={CY}
                 x2={toSvgX(1)} y2={toSvgY(tanT)}
@@ -406,14 +382,6 @@ export function UnitCircle() {
           {/* cot segment: (0,1) to (cotT, 1) */}
           {showCot && (
             <>
-              {/* right-angle mark at (0, 1) between y-axis and cot */}
-              {Math.abs(cotT) > 0.1 && (
-                <path
-                  d={rightAngle(0, 1, Math.sign(cotT), 0, 0, -1)}
-                  fill="none" stroke="#94a3b8" strokeWidth={1}
-                  style={{ pointerEvents: 'none' }}
-                />
-              )}
               <line
                 x1={CX} y1={toSvgY(1)}
                 x2={toSvgX(cotT)} y2={toSvgY(1)}
