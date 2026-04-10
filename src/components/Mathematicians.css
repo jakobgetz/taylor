@@ -1,0 +1,476 @@
+/* ── Page layout ─────────────────────────────────────────────────────────── */
+.math-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.math-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.math-search {
+  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 13px;
+  outline: none;
+  width: 160px;
+  background: #f8fafc;
+  color: #0f172a;
+  transition: border-color 0.15s;
+}
+.math-search:focus {
+  border-color: #94a3b8;
+  background: #fff;
+}
+
+.math-field-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.math-field-btn {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.math-field-btn:hover {
+  opacity: 0.8;
+}
+
+/* ── Main layout ─────────────────────────────────────────────────────────── */
+.math-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── Timeline scroll container ───────────────────────────────────────────── */
+.math-timeline-scroll {
+  flex: 0 0 52%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid #e2e8f0;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+/* ── Timeline inner (absolutely positioned elements) ─────────────────────── */
+.math-timeline-inner {
+  position: relative;
+  width: 100%;
+  min-width: 400px;
+}
+
+/* ── Era bands ───────────────────────────────────────────────────────────── */
+.math-era-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.math-era-band-label {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* ── Center vertical line ────────────────────────────────────────────────── */
+.math-center-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #cbd5e1;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+/* ── Year tick marks ─────────────────────────────────────────────────────── */
+.math-tick {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.math-tick::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 1px;
+  background: #94a3b8;
+}
+
+.math-tick-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(8px, -50%);
+  font-size: 10px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* ── Center dot per mathematician ────────────────────────────────────────── */
+.math-center-dot {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  z-index: 4;
+  pointer-events: none;
+  transition: background 0.2s;
+}
+
+/* ── Mathematician cards ──────────────────────────────────────────────────── */
+.math-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 190px;
+  padding: 7px 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  border-left: 4px solid var(--card-color);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+  text-align: left;
+  z-index: 3;
+}
+
+.math-card--left {
+  right: calc(50% + 20px);
+  flex-direction: row-reverse;
+  border-left: 1.5px solid #e2e8f0;
+  border-right: 4px solid var(--card-color);
+}
+
+.math-card--right {
+  left: calc(50% + 20px);
+}
+
+.math-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-50%) scale(1.02);
+  z-index: 5;
+}
+
+.math-card--selected {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border-color: var(--card-color) !important;
+  background: #fafeff;
+  z-index: 6;
+}
+
+/* Portrait in timeline card */
+.math-card-portrait {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  overflow: hidden;
+}
+
+.math-portrait-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.math-portrait-img {
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.math-detail-portrait.math-portrait-img {
+  border-radius: 10px;
+  width: 140px;
+  height: 170px;
+}
+.math-detail-portrait.math-portrait-fallback {
+  border-radius: 10px;
+  width: 140px;
+  height: 170px;
+  font-size: 56px;
+}
+
+.math-card-portrait.math-portrait-img,
+.math-card-portrait.math-portrait-fallback {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.math-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.math-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.math-card-dates {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.math-card-dots {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.math-card-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── Detail panel ─────────────────────────────────────────────────────────── */
+.math-detail-panel {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.math-detail-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.math-detail-content {
+  padding: 28px 28px 40px;
+  max-width: 560px;
+}
+
+/* ── Detail header ───────────────────────────────────────────────────────── */
+.math-detail-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.math-detail-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.math-detail-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  line-height: 1.2;
+}
+
+.math-detail-dates {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 2px;
+}
+
+.math-detail-age {
+  color: #94a3b8;
+}
+
+.math-detail-nationality {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.math-detail-era-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.math-detail-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.math-detail-field-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.math-detail-app-badge {
+  font-size: 11px;
+  color: #0369a1;
+  background: #e0f2fe;
+  border-radius: 8px;
+  padding: 5px 10px;
+  line-height: 1.4;
+}
+
+/* ── Bio & quote ─────────────────────────────────────────────────────────── */
+.math-detail-bio {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #334155;
+  margin: 0 0 16px;
+}
+
+.math-detail-quote {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-left: 3px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #475569;
+}
+
+/* ── Contributions ───────────────────────────────────────────────────────── */
+.math-detail-contribs-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.math-detail-contribs-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0 0 12px;
+}
+
+.math-detail-contribs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.math-contrib {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.math-contrib:hover {
+  border-color: var(--contrib-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.math-contrib--open {
+  border-color: var(--contrib-color);
+}
+
+.math-contrib-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  gap: 8px;
+  background: #fff;
+}
+
+.math-contrib--open .math-contrib-header {
+  background: color-mix(in srgb, var(--contrib-color) 8%, #fff);
+}
+
+.math-contrib-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  flex: 1;
+}
+
+.math-contrib-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.math-contrib-year {
+  font-size: 11px;
+  color: #94a3b8;
+  font-variant-numeric: tabular-nums;
+}
+
+.math-contrib-chevron {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.math-contrib-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #334155;
+  padding: 0 12px 12px;
+  margin: 0;
+  border-top: 1px solid #f1f5f9;
+}

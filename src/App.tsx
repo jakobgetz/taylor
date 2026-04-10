@@ -7,6 +7,7 @@ import { FOURIER_FUNCTIONS } from './data/fourier-functions';
 import { FormulaBar } from './components/FormulaBar';
 import { CoordinateSystem } from './components/CoordinateSystem';
 import { UnitCircle } from './components/UnitCircle';
+import { Mathematicians } from './components/Mathematicians';
 import './App.css';
 
 const DEFAULT_NUM_TERMS = 8;
@@ -22,7 +23,7 @@ const FOURIER_FORMULA = katex.renderToString(
 );
 
 export default function App() {
-  const [mode, setMode] = useState<'taylor' | 'fourier' | 'geometric'>('taylor');
+  const [mode, setMode] = useState<'taylor' | 'fourier' | 'geometric' | 'mathematicians'>('taylor');
   const [modeOpen, setModeOpen] = useState(false);
   const modeRef = useRef<HTMLDivElement>(null);
   const [selectedFn, setSelectedFn] = useState<TaylorFunction>(FUNCTIONS[0]);
@@ -39,9 +40,9 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleModeChange = (newMode: 'taylor' | 'fourier' | 'geometric') => {
+  const handleModeChange = (newMode: 'taylor' | 'fourier' | 'geometric' | 'mathematicians') => {
     setMode(newMode);
-    if (newMode !== 'geometric') {
+    if (newMode !== 'geometric' && newMode !== 'mathematicians') {
       setSelectedFn(newMode === 'taylor' ? FUNCTIONS[0] : FOURIER_FUNCTIONS[0]);
     }
     setTermRange(null);
@@ -72,7 +73,8 @@ export default function App() {
   const seriesLabel = mode === 'taylor' ? 'Taylor' : 'Fourier';
   const modeTitle = mode === 'taylor' ? 'Taylor Series Explorer'
     : mode === 'fourier' ? 'Fourier Series Explorer'
-    : 'Geometric Functions';
+    : mode === 'geometric' ? 'Geometric Functions'
+    : 'Mathematicians';
 
   return (
     <div className="app">
@@ -99,10 +101,14 @@ export default function App() {
                 className={`mode-option ${mode === 'geometric' ? 'mode-option--active' : ''}`}
                 onClick={() => handleModeChange('geometric')}
               >Geometric Functions</button>
+              <button
+                className={`mode-option ${mode === 'mathematicians' ? 'mode-option--active' : ''}`}
+                onClick={() => handleModeChange('mathematicians')}
+              >Mathematicians</button>
             </div>
           )}
         </div>
-        {mode !== 'geometric' && (
+        {mode !== 'geometric' && mode !== 'mathematicians' && (
           <>
             <span className="app-fn-label">{selectedFn.label}</span>
             <span className="app-general-formula" dangerouslySetInnerHTML={{ __html: formula }} />
@@ -112,10 +118,15 @@ export default function App() {
         {mode === 'geometric' && (
           <span className="app-geo-subtitle">Drag the point · explore the unit circle</span>
         )}
+        {mode === 'mathematicians' && (
+          <span className="app-geo-subtitle">↑ ↓ arrow keys to navigate · click to explore</span>
+        )}
       </header>
 
       {mode === 'geometric' ? (
         <UnitCircle />
+      ) : mode === 'mathematicians' ? (
+        <Mathematicians />
       ) : (
         <>
           <FormulaBar
