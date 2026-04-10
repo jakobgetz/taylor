@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 import type { TaylorFunction } from './data/functions';
 import { FUNCTIONS, N_MAX } from './data/functions';
 import { FormulaBar } from './components/FormulaBar';
@@ -6,6 +8,11 @@ import { CoordinateSystem } from './components/CoordinateSystem';
 import './App.css';
 
 const DEFAULT_NUM_TERMS = 8;
+
+const GENERAL_FORMULA = katex.renderToString(
+  'f(x) = \\displaystyle\\sum_{n=0}^{\\infty} \\dfrac{f^{(n)}(0)}{n!}\\,x^n',
+  { throwOnError: false, output: 'html' }
+);
 
 export default function App() {
   const [selectedFn, setSelectedFn] = useState<TaylorFunction>(FUNCTIONS[0]);
@@ -31,6 +38,10 @@ export default function App() {
       <header className="app-header">
         <span className="app-title">Taylor Series Explorer</span>
         <span className="app-fn-label">{selectedFn.label}</span>
+        <span
+          className="app-general-formula"
+          dangerouslySetInnerHTML={{ __html: GENERAL_FORMULA }}
+        />
       </header>
 
       <FormulaBar
