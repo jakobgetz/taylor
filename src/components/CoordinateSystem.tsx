@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TaylorFunction, Term } from '../data/functions';
+import type { TaylorFunction, Term } from '../data/functions';
 import './CoordinateSystem.css';
 
 interface Props {

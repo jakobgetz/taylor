@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import { TaylorFunction, Term } from '../data/functions';
+import type { TaylorFunction, Term } from '../data/functions';
 import './FormulaBar.css';
 
 interface Props {

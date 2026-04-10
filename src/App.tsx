@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { FUNCTIONS, TaylorFunction, Term } from './data/functions';
+import type { TaylorFunction, Term } from './data/functions';
+import { FUNCTIONS } from './data/functions';
 import { FormulaBar } from './components/FormulaBar';
 import { CoordinateSystem } from './components/CoordinateSystem';
 import './App.css';
