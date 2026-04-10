@@ -137,6 +137,14 @@ export function UnitCircle() {
   const showTan = Math.abs(cosT) > 0.08;
   const showCot = Math.abs(sinT) > 0.08;
 
+  // Label positions along sec/csc lines (clamped so they stay on screen)
+  const secLabelT  = showTan ? Math.min(0.6, 1.0 / Math.max(1, Math.abs(secT))) : 0;
+  const secLblX    = CX + secLabelT * R + 14;
+  const secLblY    = CY - secLabelT * tanT * R;
+  const cscLabelT  = showCot ? Math.min(0.6, 1.0 / Math.max(1, Math.abs(cscT))) : 0;
+  const cscLblX    = CX + cscLabelT * cotT * R;
+  const cscLblY    = CY - cscLabelT * R - 14;
+
   // SVG coords for point P
   const px = toSvgX(cosT);
   const py = toSvgY(sinT);
@@ -274,20 +282,36 @@ export function UnitCircle() {
 
           {/* sec line: (0,0) to (1, tanT) */}
           {showTan && (
-            <line
-              x1={CX} y1={CY}
-              x2={toSvgX(1)} y2={toSvgY(tanT)}
-              stroke="#059669" strokeWidth={1.5} strokeDasharray="5 3"
-            />
+            <>
+              <line
+                x1={CX} y1={CY}
+                x2={toSvgX(1)} y2={toSvgY(tanT)}
+                stroke="#059669" strokeWidth={2} strokeDasharray="5 3"
+              />
+              <text
+                x={secLblX} y={secLblY}
+                fontSize={11} fill="#059669"
+                textAnchor="start" dominantBaseline="middle"
+                style={{ userSelect: 'none', pointerEvents: 'none' }}
+              >sec θ</text>
+            </>
           )}
 
           {/* csc line: (0,0) to (cotT, 1) */}
           {showCot && (
-            <line
-              x1={CX} y1={CY}
-              x2={toSvgX(cotT)} y2={toSvgY(1)}
-              stroke="#db2777" strokeWidth={1.5} strokeDasharray="5 3"
-            />
+            <>
+              <line
+                x1={CX} y1={CY}
+                x2={toSvgX(cotT)} y2={toSvgY(1)}
+                stroke="#db2777" strokeWidth={2} strokeDasharray="5 3"
+              />
+              <text
+                x={cscLblX} y={cscLblY}
+                fontSize={11} fill="#db2777"
+                textAnchor="middle" dominantBaseline="auto"
+                style={{ userSelect: 'none', pointerEvents: 'none' }}
+              >csc θ</text>
+            </>
           )}
 
           {/* cos segment: (0,0) to (cosT, 0) */}
@@ -399,12 +423,12 @@ export function UnitCircle() {
           <div className="uc-angle-deg">{degrees}°</div>
         </div>
 
-        <FnRow dot="#dc2626" name={`sin(${piLabel})`} value={sinT} color="#dc2626" exact={exactVals?.sin} />
-        <FnRow dot="#2563eb" name={`cos(${piLabel})`} value={cosT} color="#2563eb" exact={exactVals?.cos} />
-        <FnRow dot="#d97706" name={`tan(${piLabel})`} value={tanT} color="#d97706" exact={exactVals?.tan} />
-        <FnRow dot="#7c3aed" name={`cot(${piLabel})`} value={cotT} color="#7c3aed" exact={exactVals?.cot} />
-        <FnRow dot="#059669" name={`sec(${piLabel})`} value={secT} color="#059669" exact={exactVals?.sec} />
-        <FnRow dot="#db2777" name={`csc(${piLabel})`} value={cscT} color="#db2777" exact={exactVals?.csc} />
+        <FnRow dot="#dc2626" name="sin θ" value={sinT} color="#dc2626" exact={exactVals?.sin} />
+        <FnRow dot="#2563eb" name="cos θ" value={cosT} color="#2563eb" exact={exactVals?.cos} />
+        <FnRow dot="#d97706" name="tan θ" value={tanT} color="#d97706" exact={exactVals?.tan} />
+        <FnRow dot="#7c3aed" name="cot θ" value={cotT} color="#7c3aed" exact={exactVals?.cot} />
+        <FnRow dot="#059669" name="sec θ" value={secT} color="#059669" exact={exactVals?.sec} />
+        <FnRow dot="#db2777" name="csc θ" value={cscT} color="#db2777" exact={exactVals?.csc} />
       </div>
     </div>
   );

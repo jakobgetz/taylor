@@ -80,7 +80,7 @@
 .uc-fn-name {
   font-size: 13px;
   color: #475569;
-  white-space: nowrap;
+  width: 48px;
   flex-shrink: 0;
 }
 
