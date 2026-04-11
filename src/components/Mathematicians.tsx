@@ -12,13 +12,14 @@ import './Mathematicians.css';
 
 // ─── Piecewise year → pixel mapping ───────────────────────────────────────────
 const BREAKPOINTS = [
-  { year: -400, y: 40 },
-  { year:  1000, y: 320 },
-  { year:  1600, y: 560 },
-  { year:  1970, y: 1600 },
+  { year: -600, y: 20 },
+  { year: -400, y: 60 },
+  { year:  1000, y: 340 },
+  { year:  1600, y: 580 },
+  { year:  2020, y: 1700 },
 ] as const;
 
-const TOTAL_HEIGHT = 1660;
+const TOTAL_HEIGHT = 1760;
 
 function yearToY(year: number): number {
   for (let i = 0; i < BREAKPOINTS.length - 1; i++) {
@@ -40,7 +41,63 @@ function formatLifespan(m: Mathematician): string {
   return `${formatYear(m.birth)} – ${d}`;
 }
 
-const YEAR_TICKS = [-300, -200, -100, 0, 500, 1000, 1200, 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950];
+const YEAR_TICKS = [-500, -300, -100, 0, 500, 1000, 1200, 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000];
+
+// ─── Static layout computation ────────────────────────────────────────────────
+const CARD_H = 70;   // estimated card height + gap
+const CARD_GAP = 8;
+const LANE_W = 5;
+const LANE_GAP = 1;
+
+const SORTED = [...MATHEMATICIANS].sort((a, b) => a.birth - b.birth);
+
+// Non-overlapping card positions: alternate left/right in birth-year order,
+// push down if previous card on same side would overlap.
+const CARD_LAYOUT: Map<string, { y: number; side: 'left' | 'right' }> = (() => {
+  const map = new Map<string, { y: number; side: 'left' | 'right' }>();
+  let bottomL = -Infinity;
+  let bottomR = -Infinity;
+  SORTED.forEach((m, i) => {
+    const naturalY = yearToY(m.birth) - CARD_H / 2;
+    const side: 'left' | 'right' = i % 2 === 0 ? 'left' : 'right';
+    let y: number;
+    if (side === 'left') {
+      y = Math.max(naturalY, bottomL + CARD_GAP);
+      bottomL = y + CARD_H;
+    } else {
+      y = Math.max(naturalY, bottomR + CARD_GAP);
+      bottomR = y + CARD_H;
+    }
+    map.set(m.id, { y, side });
+  });
+  return map;
+})();
+
+// Lifespan lane assignment: greedy interval scheduling
+const { LANE_MAP, NUM_LANES } = (() => {
+  const laneEnd: number[] = [];
+  const map = new Map<string, number>();
+  for (const m of SORTED) {
+    const death = m.death ?? m.birth + 80;
+    let lane = laneEnd.findIndex(e => e <= m.birth);
+    if (lane === -1) { lane = laneEnd.length; laneEnd.push(death); }
+    else { laneEnd[lane] = death; }
+    map.set(m.id, lane);
+  }
+  return { LANE_MAP: map, NUM_LANES: laneEnd.length };
+})();
+
+// Total canvas height needed (cards may extend beyond TOTAL_HEIGHT)
+const CANVAS_H = (() => {
+  let max = TOTAL_HEIGHT;
+  for (const { y } of CARD_LAYOUT.values()) max = Math.max(max, y + CARD_H);
+  return max + 100;
+})();
+
+// Half-width of the lifespan bar cluster
+const BARS_HALF_W = Math.ceil(NUM_LANES / 2) * (LANE_W + LANE_GAP);
+// Card offset from center (leave room for bars + gap)
+const CARD_OFFSET = BARS_HALF_W + 18;
 
 // ─── Portrait URL helper ───────────────────────────────────────────────────────
 function portraitUrl(filename: string, width = 200): string {
@@ -110,21 +167,21 @@ export function Mathematicians() {
   // Auto-scroll timeline to selected mathematician
   useEffect(() => {
     if (!selected || !timelineRef.current) return;
-    const y = yearToY(selected.birth);
+    const pos = CARD_LAYOUT.get(selected.id);
+    const y = pos ? pos.y : yearToY(selected.birth);
     const el = timelineRef.current;
-    el.scrollTo({ top: y - el.clientHeight / 2, behavior: 'smooth' });
+    el.scrollTo({ top: y - el.clientHeight / 2 + CARD_H / 2, behavior: 'smooth' });
     setExpandedContrib(null);
   }, [selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Keyboard navigation: up/down arrows move through mathematicians
+  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
       e.preventDefault();
-      const sorted = [...MATHEMATICIANS].sort((a, b) => a.birth - b.birth);
-      const idx = sorted.findIndex(m => m.id === selectedId);
-      if (e.key === 'ArrowDown' && idx < sorted.length - 1) setSelectedId(sorted[idx + 1].id);
-      if (e.key === 'ArrowUp' && idx > 0) setSelectedId(sorted[idx - 1].id);
+      const idx = SORTED.findIndex(m => m.id === selectedId);
+      if (e.key === 'ArrowDown' && idx < SORTED.length - 1) setSelectedId(SORTED[idx + 1].id);
+      if (e.key === 'ArrowUp' && idx > 0) setSelectedId(SORTED[idx - 1].id);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -164,7 +221,7 @@ export function Mathematicians() {
 
         {/* ── Timeline ─────────────────────────────────────────── */}
         <div className="math-timeline-scroll" ref={timelineRef}>
-          <div className="math-timeline-inner" style={{ height: TOTAL_HEIGHT + 80 }}>
+          <div className="math-timeline-inner" style={{ height: CANVAS_H }}>
 
             {/* Era background bands */}
             {ERA_BAND_DATA.map(band => {
@@ -196,21 +253,37 @@ export function Mathematicians() {
               </div>
             ))}
 
-            {/* Center dot for each mathematician */}
-            {MATHEMATICIANS.map(m => (
-              <div
-                key={`dot-${m.id}`}
-                className="math-center-dot"
-                style={{
-                  top: yearToY(m.birth),
-                  background: isVisible(m) ? FIELD_COLORS[m.fields[0]] : '#e2e8f0',
-                }}
-              />
-            ))}
+            {/* ── Lifespan bars ── */}
+            {SORTED.map(m => {
+              const lane = LANE_MAP.get(m.id) ?? 0;
+              const topY = yearToY(m.birth);
+              const botY = yearToY(m.death ?? m.birth + 80);
+              // Center bars symmetrically around 50%
+              const offset = (lane - (NUM_LANES - 1) / 2) * (LANE_W + LANE_GAP);
+              const visible = isVisible(m);
+              const isSelected = m.id === selectedId;
+              return (
+                <div
+                  key={`bar-${m.id}`}
+                  className={`math-lifespan-bar${isSelected ? ' math-lifespan-bar--selected' : ''}`}
+                  style={{
+                    top: topY,
+                    height: Math.max(botY - topY, 4),
+                    left: `calc(50% + ${offset}px)`,
+                    width: LANE_W,
+                    background: FIELD_COLORS[m.fields[0]],
+                    opacity: visible ? (isSelected ? 1 : 0.65) : 0.08,
+                  }}
+                  onClick={() => setSelectedId(m.id)}
+                  title={`${m.name} (${formatYear(m.birth)}–${m.death ? formatYear(m.death) : '?'})`}
+                />
+              );
+            })}
 
             {/* Mathematician cards */}
-            {MATHEMATICIANS.map((m, i) => {
-              const isLeft = i % 2 === 0;
+            {SORTED.map(m => {
+              const pos = CARD_LAYOUT.get(m.id)!;
+              const isLeft = pos.side === 'left';
               const visible = isVisible(m);
               const isSelected = m.id === selectedId;
 
@@ -223,8 +296,9 @@ export function Mathematicians() {
                     isSelected ? 'math-card--selected' : '',
                   ].join(' ')}
                   style={{
-                    top: yearToY(m.birth),
-                    opacity: visible ? 1 : 0.1,
+                    top: pos.y,
+                    [isLeft ? 'right' : 'left']: `calc(50% + ${CARD_OFFSET}px)`,
+                    opacity: visible ? 1 : 0.08,
                     pointerEvents: visible ? 'auto' : 'none',
                     '--card-color': FIELD_COLORS[m.fields[0]],
                   } as React.CSSProperties}

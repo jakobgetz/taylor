@@ -144,16 +144,28 @@
 
 /* ── Center dot per mathematician ────────────────────────────────────────── */
 .math-center-dot {
+  display: none; /* replaced by lifespan bars */
+}
+
+/* ── Lifespan bars ────────────────────────────────────────────────────────── */
+.math-lifespan-bar {
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid #fff;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
   z-index: 4;
-  pointer-events: none;
-  transition: background 0.2s;
+  transform: translateX(-50%);
+}
+
+.math-lifespan-bar:hover {
+  opacity: 1 !important;
+  z-index: 8;
+  transform: translateX(-50%) scaleX(1.6);
+}
+
+.math-lifespan-bar--selected {
+  z-index: 7;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px currentColor;
 }
 
 /* ── Mathematician cards ──────────────────────────────────────────────────── */
@@ -170,26 +182,23 @@
   border-left: 4px solid var(--card-color);
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   cursor: pointer;
-  transform: translateY(-50%);
-  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+  transition: box-shadow 0.15s, opacity 0.15s, border-color 0.15s;
   text-align: left;
   z-index: 3;
 }
 
 .math-card--left {
-  right: calc(50% + 20px);
   flex-direction: row-reverse;
   border-left: 1.5px solid #e2e8f0;
   border-right: 4px solid var(--card-color);
 }
 
 .math-card--right {
-  left: calc(50% + 20px);
+  /* left set inline */
 }
 
 .math-card:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  transform: translateY(-50%) scale(1.02);
   z-index: 5;
 }
 
