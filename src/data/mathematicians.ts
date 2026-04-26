@@ -448,6 +448,22 @@ export const MATHEMATICIANS: Mathematician[] = [
     appRelated: ['fourier'],
   },
   {
+    id: 'cayley',
+    name: 'Arthur Cayley',
+    birth: 1821,
+    death: 1895,
+    nationality: 'British',
+    fields: ['Algebra', 'Geometry'],
+    era: 'Modern',
+    portraitFile: 'Arthur_Cayley.jpg',
+    shortBio: 'Arthur Cayley was a British mathematician who founded modern group theory and developed the algebra of matrices, unifying algebraic structures and laying groundwork for linear algebra.',
+    contributions: [
+      { title: 'Founding Group Theory', year: 1854, description: 'Systematized the theory of groups and introduced the Cayley table representation, treating groups as algebraic objects rather than permutation groups.' },
+      { title: 'Cayley–Hamilton Theorem', year: 1858, description: 'Proved that every square matrix satisfies its own characteristic equation, a fundamental result in linear algebra.' },
+      { title: 'Matrix Algebra', description: 'Developed matrix notation and operations, advancing linear algebra as a central tool in mathematics and physics.' },
+    ],
+  },
+  {
     id: 'cantor',
     name: 'Georg Cantor',
     birth: 1845,
